@@ -1,1481 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>AfricanLineage.com – Discover Your Roots</title>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AfricanLineage</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --g900:#0f2e14;--g800:#1a4420;--g700:#215829;--g600:#2d7a38;--g500:#3a9146;
-  --g400:#5ab068;--g300:#8ecf98;--g200:#c2e8c9;--g100:#e4f5e7;--g50:#f3fbf4;
-  --sand:#faf7f2;--sand2:#f0ebe0;--white:#fff;
-  --td:#1a2e1c;--tm:#3d5c42;--tl:#6b8e72;
-  --r-sm:8px;--r-md:14px;--r-lg:22px;--r-xl:32px;
-  --shadow-sm:0 1px 4px rgba(0,0,0,.08);
-  --shadow-md:0 4px 16px rgba(0,0,0,.1);
-  --shadow-lg:0 12px 40px rgba(0,0,0,.14);
-}
-html{scroll-behavior:smooth}
-body{font-family:'Source Sans 3',sans-serif;background:var(--sand);color:var(--td);min-height:100vh;overflow-x:hidden}
-h1,h2,h3,h4{font-family:'Quicksand',sans-serif;font-weight:700}
-button{cursor:pointer;font-family:'Source Sans 3',sans-serif}
-input,select,textarea{font-family:'Source Sans 3',sans-serif}
-a{text-decoration:none;color:inherit}
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:var(--g50)}
-::-webkit-scrollbar-thumb{background:var(--g300);border-radius:3px}
-
-/* ---- LAYOUT ---- */
-.app-wrap{display:flex;flex-direction:column;min-height:100vh}
-.main-content{flex:1}
-
-/* ---- NAV ---- */
-.nav{background:rgba(250,247,242,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(42,122,56,.12);padding:0 1.5rem;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
-.nav-logo{display:flex;align-items:center;gap:8px;cursor:pointer}
-.logo-mark{width:32px;height:32px}
-.logo-text{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1.05rem;color:var(--g800)}
-.logo-text span{color:var(--g500)}
-.nav-center{display:flex;gap:1.5rem;align-items:center}
-.nav-link{font-size:.88rem;color:var(--tm);transition:color .2s;background:none;border:none;padding:0}
-.nav-link:hover{color:var(--g600)}
-.nav-right{display:flex;gap:.75rem;align-items:center}
-.btn{border:none;border-radius:100px;padding:.5rem 1.1rem;font-size:.875rem;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem}
-.btn-sm{padding:.35rem .85rem;font-size:.82rem}
-.btn-primary{background:var(--g600);color:#fff;box-shadow:0 2px 8px rgba(42,122,56,.25)}
-.btn-primary:hover{background:var(--g700);transform:translateY(-1px);box-shadow:0 4px 14px rgba(42,122,56,.3)}
-.btn-secondary{background:var(--white);color:var(--g700);border:1.5px solid var(--g200)}
-.btn-secondary:hover{background:var(--g50);border-color:var(--g300)}
-.btn-ghost{background:transparent;color:var(--tm);border:none}
-.btn-ghost:hover{background:var(--g50);color:var(--g700)}
-.btn-danger{background:#e53e3e;color:#fff}
-.btn-danger:hover{background:#c53030}
-.btn-outline-green{background:transparent;color:var(--g700);border:1.5px solid var(--g300)}
-.btn-outline-green:hover{background:var(--g100);border-color:var(--g400)}
-.btn-white{background:#fff;color:var(--g800);box-shadow:0 2px 10px rgba(0,0,0,.15)}
-.btn-white:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
-.btn-lg{padding:.75rem 1.75rem;font-size:.95rem}
-
-/* ---- HERO ---- */
-.hero{background:linear-gradient(160deg,var(--g50) 0%,var(--sand) 55%,var(--sand2) 100%);padding:5rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
-.hero-dots{position:absolute;inset:0;opacity:.04;background-image:radial-gradient(circle,var(--g600) 1.5px,transparent 1.5px);background-size:36px 36px;pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--g100);color:var(--g700);border:1px solid var(--g200);border-radius:100px;padding:.3rem .9rem;font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:1.25rem;animation:fadeUp .5s ease both}
-.hero h1{font-size:clamp(2rem,5vw,3.2rem);color:var(--g900);line-height:1.18;letter-spacing:-.025em;max-width:680px;margin:0 auto 1rem;animation:fadeUp .5s .1s ease both}
-.hero h1 em{font-style:normal;color:var(--g500);position:relative}
-.hero h1 em::after{content:'';position:absolute;bottom:2px;left:0;right:0;height:3px;background:var(--g300);border-radius:2px;opacity:.7}
-.hero-sub{font-size:1.05rem;color:var(--tm);max-width:500px;margin:0 auto 2.25rem;line-height:1.7;animation:fadeUp .5s .2s ease both}
-.hero-actions{display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap;animation:fadeUp .5s .3s ease both}
-.search-hero{background:var(--white);border:1.5px solid var(--g200);border-radius:100px;display:flex;align-items:center;padding:.3rem .3rem .3rem 1.1rem;gap:.5rem;box-shadow:0 4px 20px rgba(0,0,0,.06);max-width:560px;margin:2.25rem auto 0;animation:fadeUp .5s .4s ease both;transition:border-color .2s,box-shadow .2s}
-.search-hero:focus-within{border-color:var(--g400);box-shadow:0 4px 24px rgba(42,122,56,.15)}
-.search-hero input{flex:1;border:none;outline:none;font-size:.9rem;color:var(--td);background:transparent;padding:.45rem 0}
-.search-hero input::placeholder{color:var(--tl)}
-.stats-strip{background:var(--g800);color:#fff;padding:1.75rem 2rem;display:flex;justify-content:center;gap:3.5rem;flex-wrap:wrap}
-.stat{text-align:center}
-.stat-n{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1.85rem;color:var(--g300);line-height:1;display:block;margin-bottom:.2rem}
-.stat-l{font-size:.8rem;color:rgba(255,255,255,.6)}
-
-/* ---- SECTIONS ---- */
-.section{padding:4.5rem 2rem}
-.section-label{text-align:center;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:.6rem}
-.section-title{font-size:clamp(1.5rem,3vw,2.1rem);color:var(--g900);text-align:center;letter-spacing:-.02em;margin-bottom:.65rem}
-.section-sub{font-size:.95rem;color:var(--tm);text-align:center;max-width:460px;margin:0 auto 3rem;line-height:1.7}
-.bg-light{background:var(--g50)}
-.bg-dark{background:var(--g800)}
-
-/* ---- CARDS ---- */
-.card{background:var(--white);border:1px solid rgba(42,122,56,.1);border-radius:var(--r-lg);padding:1.5rem;transition:transform .2s,box-shadow .2s}
-.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
-.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.25rem;max-width:920px;margin:0 auto}
-.card-icon{width:46px;height:46px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:.875rem}
-.card h3{font-size:.975rem;color:var(--g900);margin-bottom:.4rem}
-.card p{font-size:.865rem;color:var(--tm);line-height:1.65}
-
-/* ---- MODAL ---- */
-.modal-overlay{position:fixed;inset:0;background:rgba(15,46,20,.45);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .2s ease}
-.modal{background:var(--white);border-radius:var(--r-lg);padding:2rem;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp .25s ease;box-shadow:var(--shadow-lg)}
-.modal-lg{max-width:760px}
-.modal-xl{max-width:1100px;max-height:95vh}
-.modal-close{position:absolute;top:1rem;right:1rem;background:var(--g50);border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:var(--tm);font-size:1.1rem;transition:background .2s}
-.modal-close:hover{background:var(--g100);color:var(--g700)}
-.modal h2{font-size:1.4rem;color:var(--g900);margin-bottom:.35rem}
-.modal-sub{font-size:.875rem;color:var(--tl);margin-bottom:1.5rem}
-
-/* ---- FORMS ---- */
-.form-group{margin-bottom:1rem}
-.form-label{display:block;font-size:.82rem;font-weight:600;color:var(--tm);margin-bottom:.4rem;letter-spacing:.01em}
-.form-input{width:100%;border:1.5px solid var(--g200);border-radius:var(--r-sm);padding:.6rem .9rem;font-size:.9rem;color:var(--td);background:var(--white);outline:none;transition:border-color .2s,box-shadow .2s}
-.form-input:focus{border-color:var(--g400);box-shadow:0 0 0 3px rgba(42,122,56,.12)}
-.form-input::placeholder{color:var(--tl)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.875rem}
-.form-divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;color:var(--tl);font-size:.8rem}
-.form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:var(--g100)}
-.form-link{color:var(--g600);font-size:.85rem;cursor:pointer}
-.form-link:hover{color:var(--g700);text-decoration:underline}
-.form-error{background:#fff5f5;border:1px solid #fed7d7;border-radius:var(--r-sm);padding:.6rem .9rem;font-size:.82rem;color:#c53030;margin-bottom:1rem}
-.form-success{background:#f0fff4;border:1px solid var(--g200);border-radius:var(--r-sm);padding:.6rem .9rem;font-size:.82rem;color:var(--g700);margin-bottom:1rem}
-select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b8e72' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center}
-
-/* ---- DASHBOARD ---- */
-.dashboard{display:flex;min-height:calc(100vh - 60px)}
-.sidebar{width:240px;background:var(--white);border-right:1px solid var(--g100);padding:1.5rem 0;flex-shrink:0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
-.sidebar-section{padding:0 1rem;margin-bottom:1.5rem}
-.sidebar-label{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tl);margin-bottom:.5rem;padding:0 .5rem}
-.sidebar-item{display:flex;align-items:center;gap:.65rem;padding:.55rem .75rem;border-radius:var(--r-sm);font-size:.875rem;color:var(--tm);cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
-.sidebar-item:hover{background:var(--g50);color:var(--g700)}
-.sidebar-item.active{background:var(--g100);color:var(--g700);font-weight:600}
-.sidebar-icon{font-size:1rem;width:20px;text-align:center}
-.dash-content{flex:1;padding:2rem;overflow-y:auto;background:var(--sand)}
-.dash-header{margin-bottom:2rem}
-.dash-header h1{font-size:1.6rem;color:var(--g900);margin-bottom:.25rem}
-.dash-header p{color:var(--tl);font-size:.9rem}
-.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
-.dash-stat{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-md);padding:1.25rem 1.5rem}
-.dash-stat-n{font-family:'Quicksand',sans-serif;font-weight:700;font-size:2rem;color:var(--g600);display:block;line-height:1;margin-bottom:.2rem}
-.dash-stat-l{font-size:.8rem;color:var(--tl)}
-
-/* ---- FAMILY TREE ---- */
-.tree-toolbar{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap}
-.tree-toolbar h2{font-size:1.1rem;color:var(--g900);margin-right:auto}
-.tree-canvas{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-lg);overflow:auto;min-height:500px;position:relative}
-.tree-svg-wrap{overflow:auto;padding:2rem;min-width:600px}
-.tree-node{cursor:pointer;transition:all .2s}
-.tree-node-card{fill:var(--white);stroke:var(--g200);stroke-width:1.5}
-.tree-node-card.male{stroke:var(--g400)}
-.tree-node-card.female{stroke:#e4a0a0}
-.tree-node-card.selected{stroke:var(--g600);stroke-width:2.5}
-.tree-name{font-family:'Quicksand',sans-serif;font-weight:600;font-size:13px;fill:var(--g900)}
-.tree-dates{font-size:10px;fill:var(--tl)}
-.tree-connector{stroke:var(--g300);stroke-width:1.5;fill:none}
-.person-avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--g200)}
-.person-avatar-placeholder{width:56px;height:56px;border-radius:50%;background:var(--g100);border:2px solid var(--g200);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--g500);font-family:'Quicksand',sans-serif;font-weight:700}
-
-/* ---- PERSON CARD ---- */
-.person-list{display:grid;gap:1rem}
-.person-card{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-md);padding:1.25rem;display:flex;align-items:center;gap:1rem;transition:box-shadow .2s}
-.person-card:hover{box-shadow:var(--shadow-sm)}
-.person-info{flex:1}
-.person-name{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1rem;color:var(--g900)}
-.person-meta{font-size:.8rem;color:var(--tl);margin-top:.2rem}
-.person-actions{display:flex;gap:.5rem}
-
-/* ---- SEARCH ---- */
-.search-page{max-width:800px;margin:0 auto}
-.search-bar-main{display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap}
-.search-bar-main input{flex:1;min-width:200px;border:1.5px solid var(--g200);border-radius:var(--r-md);padding:.65rem 1rem;font-size:.9rem;outline:none;transition:border-color .2s}
-.search-bar-main input:focus{border-color:var(--g400)}
-.search-filters{display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap}
-.filter-chip{padding:.35rem .9rem;border:1.5px solid var(--g200);border-radius:100px;font-size:.8rem;color:var(--tm);background:var(--white);cursor:pointer;transition:all .2s}
-.filter-chip.active,.filter-chip:hover{background:var(--g100);border-color:var(--g400);color:var(--g700)}
-.search-result{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-md);padding:1.25rem;margin-bottom:.75rem;transition:box-shadow .2s,border-color .2s;cursor:pointer}
-.search-result:hover{box-shadow:var(--shadow-sm);border-color:var(--g200)}
-.result-name{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1rem;color:var(--g700);margin-bottom:.25rem}
-.result-meta{font-size:.8rem;color:var(--tl)}
-.result-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}
-.tag{background:var(--g50);color:var(--g700);border:1px solid var(--g100);border-radius:100px;padding:.15rem .6rem;font-size:.72rem;font-weight:600}
-
-/* ---- PHOTO GALLERY ---- */
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.875rem}
-.photo-item{border-radius:var(--r-md);overflow:hidden;aspect-ratio:1;background:var(--g50);border:1px solid var(--g100);cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative}
-.photo-item:hover{transform:scale(1.03);box-shadow:var(--shadow-md)}
-.photo-item img{width:100%;height:100%;object-fit:cover}
-.photo-item-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--g300)}
-.photo-upload-zone{border:2px dashed var(--g200);border-radius:var(--r-lg);padding:3rem 2rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--g50)}
-.photo-upload-zone:hover,.photo-upload-zone.drag{border-color:var(--g400);background:var(--g100)}
-.photo-upload-zone .icon{font-size:2.5rem;margin-bottom:.75rem;color:var(--g300)}
-
-/* ---- TABS ---- */
-.tabs{display:flex;gap:.25rem;border-bottom:2px solid var(--g100);margin-bottom:1.5rem}
-.tab{padding:.6rem 1.1rem;font-size:.875rem;font-weight:600;color:var(--tl);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s}
-.tab.active{color:var(--g600);border-bottom-color:var(--g600)}
-.tab:hover:not(.active){color:var(--tm)}
-
-/* ---- TIMELINE ---- */
-.timeline{position:relative;padding-left:2rem}
-.timeline::before{content:'';position:absolute;left:.6rem;top:0;bottom:0;width:2px;background:var(--g100)}
-.timeline-item{position:relative;margin-bottom:1.5rem}
-.timeline-dot{position:absolute;left:-1.6rem;top:.25rem;width:12px;height:12px;border-radius:50%;background:var(--g400);border:2px solid var(--white);box-shadow:0 0 0 2px var(--g200)}
-.timeline-date{font-size:.75rem;color:var(--tl);font-weight:600;margin-bottom:.2rem}
-.timeline-content{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-sm);padding:.875rem 1rem;font-size:.875rem;color:var(--tm)}
-
-/* ---- HINTS / HINTS ---- */
-.hints-section{background:linear-gradient(135deg,var(--g800),var(--g700));border-radius:var(--r-lg);padding:1.5rem;color:#fff;margin-bottom:1.5rem}
-.hints-section h3{font-size:1rem;color:var(--g200);margin-bottom:.75rem}
-.hint-item{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.875rem;padding:.875rem;background:rgba(255,255,255,.08);border-radius:var(--r-sm);cursor:pointer;transition:background .2s}
-.hint-item:hover{background:rgba(255,255,255,.14)}
-.hint-icon{font-size:1.4rem;flex-shrink:0}
-.hint-text{font-size:.82rem;line-height:1.55;color:rgba(255,255,255,.85)}
-.hint-text strong{color:#fff;font-weight:600;display:block;margin-bottom:.15rem}
-.hint-badge{font-size:.7rem;padding:.15rem .5rem;border-radius:100px;font-weight:700;display:inline-block;margin-top:.3rem}
-.hb-new{background:rgba(90,176,104,.3);color:var(--g200)}
-.hb-dna{background:rgba(66,153,225,.25);color:#90cdf4}
-
-/* ---- PRINT ---- */
-@media print{
-  .nav,.sidebar,.tree-toolbar .btn,.modal-overlay,.no-print{display:none!important}
-  .dashboard{display:block}
-  .dash-content{padding:0}
-  body{background:white}
-  .tree-canvas{border:none;box-shadow:none;min-height:auto}
-}
-
-/* ---- FOOTER ---- */
-footer{background:var(--g900);color:rgba(255,255,255,.5);padding:2.5rem 2rem 1.5rem}
-.footer-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:2rem;margin-bottom:2rem}
-.footer-col h4{font-family:'Quicksand',sans-serif;font-weight:700;font-size:.8rem;color:rgba(255,255,255,.75);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.75rem}
-.footer-col ul{list-style:none}
-.footer-col li{margin-bottom:.4rem}
-.footer-col a{font-size:.83rem;color:rgba(255,255,255,.45);transition:color .2s}
-.footer-col a:hover{color:var(--g300)}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:1.25rem;text-align:center;font-size:.78rem;max-width:900px;margin:0 auto}
-
-/* ---- UTILITY ---- */
-.flex{display:flex}.flex-1{flex:1}.items-center{align-items:center}.gap-1{gap:.5rem}.gap-2{gap:.75rem}.gap-3{gap:1rem}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.text-center{text-align:center}.mt-1{margin-top:.5rem}.mt-2{margin-top:.75rem}.mt-3{margin-top:1rem}.mt-4{margin-top:1.5rem}.mb-1{margin-bottom:.5rem}.mb-2{margin-bottom:.75rem}.mb-3{margin-bottom:1rem}.w-full{width:100%}.relative{position:relative}
-.badge{display:inline-flex;align-items:center;padding:.2rem .6rem;border-radius:100px;font-size:.72rem;font-weight:700}
-.badge-green{background:var(--g100);color:var(--g700)}
-.badge-amber{background:#fef3c7;color:#92400e}
-.badge-blue{background:#dbeafe;color:#1e40af}
-.badge-red{background:#fee2e2;color:#991b1b}
-.divider{height:1px;background:var(--g100);margin:1.25rem 0}
-.empty-state{text-align:center;padding:3rem 1.5rem;color:var(--tl)}
-.empty-state .icon{font-size:3rem;margin-bottom:.75rem}
-.empty-state p{font-size:.9rem}
-.tooltip{position:relative}
-.progress-bar{height:6px;background:var(--g100);border-radius:3px;overflow:hidden;margin-top:.5rem}
-.progress-fill{height:100%;background:var(--g400);border-radius:3px;transition:width .4s ease}
-.chip{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;background:var(--g50);border:1px solid var(--g100);border-radius:100px;font-size:.78rem;color:var(--tm)}
-.notification{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-md);padding:1rem 1.25rem;margin-bottom:.75rem;display:flex;gap:.75rem;align-items:flex-start}
-.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--g400);flex-shrink:0;margin-top:.3rem}
-.notif-text{font-size:.875rem;color:var(--tm)}
-.notif-text strong{color:var(--g900);font-weight:600}
-.notif-time{font-size:.75rem;color:var(--tl);margin-top:.2rem}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-.spin{animation:spin 1s linear infinite}
+body{font-family:Arial;margin:0;background:#f5f5f5}
+.container{padding:20px}
+.card{background:#fff;padding:15px;border-radius:10px;margin-bottom:10px}
+button{padding:8px 12px;border:none;border-radius:6px;background:#2d7a38;color:#fff;cursor:pointer}
+input{padding:8px;margin:5px 0;width:100%}
+.error{color:red;margin-top:10px}
 </style>
 </head>
 <body>
 <div id="root"></div>
 
 <script type="text/babel">
-const { useState, useEffect, useRef, useCallback } = React;
+const { useState, useEffect } = React;
 
-// ─── SAMPLE DATA ──────────────────────────────────────────────────────────────
-const SAMPLE_PERSONS = [
-  { id:'p1', firstName:'Kwame', lastName:'Mensah', gender:'male', birthYear:1942, birthPlace:'Accra, Ghana', deathYear:2018, motherId:null, fatherId:null, spouseId:'p2', photoUrl:null, notes:'Founder of the Mensah family line in Accra. Worked as a school teacher for 35 years.', occupation:'School Teacher', generation:0 },
-  { id:'p2', firstName:'Abena', lastName:'Mensah', gender:'female', birthYear:1945, birthPlace:'Kumasi, Ghana', deathYear:null, motherId:null, fatherId:null, spouseId:'p1', photoUrl:null, notes:'Beloved matriarch. Known for her kente weaving.', occupation:'Kente Weaver', generation:0 },
-  { id:'p3', firstName:'Kofi', lastName:'Mensah', gender:'male', birthYear:1968, birthPlace:'Accra, Ghana', deathYear:null, motherId:'p2', fatherId:'p1', spouseId:'p4', photoUrl:null, notes:'', occupation:'Engineer', generation:1 },
-  { id:'p4', firstName:'Ama', lastName:'Mensah', gender:'female', birthYear:1972, birthPlace:'Cape Coast, Ghana', deathYear:null, motherId:null, fatherId:null, spouseId:'p3', photoUrl:null, notes:'', occupation:'Doctor', generation:1 },
-  { id:'p5', firstName:'Akosua', lastName:'Boateng', gender:'female', birthYear:1970, birthPlace:'Accra, Ghana', deathYear:null, motherId:'p2', fatherId:'p1', spouseId:null, photoUrl:null, notes:'', occupation:'Lawyer', generation:1 },
-  { id:'p6', firstName:'Yaw', lastName:'Mensah', gender:'male', birthYear:1998, birthPlace:'Accra, Ghana', deathYear:null, motherId:'p4', fatherId:'p3', spouseId:null, photoUrl:null, notes:'', occupation:'Student', generation:2 },
-  { id:'p7', firstName:'Efua', lastName:'Mensah', gender:'female', birthYear:2001, birthPlace:'London, UK', deathYear:null, motherId:'p4', fatherId:'p3', spouseId:null, photoUrl:null, notes:'', occupation:'Student', generation:2 },
-];
+// 🔑 INSERT YOUR SUPABASE KEYS
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
 
-const SAMPLE_PHOTOS = [
-  { id:'ph1', name:'Family Reunion 2019', year:2019, personIds:['p1','p2','p3','p4'], url:'https://placehold.co/300x300/c2e8c9/1a4420?text=Family+Reunion' },
-  { id:'ph2', name:'Kwame Wedding Day', year:1966, personIds:['p1','p2'], url:'https://placehold.co/300x300/e4f5e7/215829?text=Wedding+1966' },
-  { id:'ph3', name:'Kofi Graduation', year:1990, personIds:['p3'], url:'https://placehold.co/300x300/d4edda/2d7a38?text=Graduation+1990' },
-];
+let supabase = null;
 
-const ANCESTRY_RECORDS = [
-  { id:'r1', name:'Kwame Mensah', type:'Census Record', year:1950, region:'Gold Coast (Ghana)', collection:'Gold Coast Census 1948', description:'Household record from Accra district' },
-  { id:'r2', name:'Abena Asante', type:'Birth Certificate', year:1945, region:'Ashanti Region, Ghana', collection:'Ashanti Birth Registry', description:'Birth registered at Kumasi Municipal' },
-  { id:'r3', name:'John Osei Mensah', type:'Marriage Record', year:1938, region:'Accra, Ghana', collection:'Colonial Marriage Records', description:'Marriage certificate from Accra magistrate' },
-  { id:'r4', name:'Kwame Mensah', type:'Newspaper', year:1965, region:'Accra, Ghana', collection:'Daily Graphic Archives', description:'Mentioned in school sports results article' },
-  { id:'r5', name:'Adwoa Mensah', type:'Burial Record', year:1928, region:'Eastern Region, Ghana', collection:'Presbyterian Church Records', description:'Burial record at Kibi Presbyterian Cemetery' },
-  { id:'r6', name:'Emmanuel Kofi', type:'Military Record', year:1942, region:'Gold Coast Regiment', collection:'WWII Service Records', description:'Service record – Gold Coast Regiment, Burma Campaign' },
-  { id:'r7', name:'Efua Boateng', type:'Ship Manifest', year:1962, region:'Liverpool, UK', collection:'UK Passenger Lists', description:'Arrived Liverpool from Accra for studies' },
-  { id:'r8', name:'Samuel Mensah', type:'Land Deed', year:1955, region:'Greater Accra, Ghana', collection:'Land Title Registry', description:'Land allocation in Labadi area, Accra' },
-];
-
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
-const uid = () => 'p' + Math.random().toString(36).slice(2, 9);
-const photoUid = () => 'ph' + Math.random().toString(36).slice(2, 9);
-
-function initials(p) {
-  return ((p.firstName||'?')[0] + (p.lastName||'?')[0]).toUpperCase();
-}
-function fullName(p) {
-  return `${p.firstName||''} ${p.lastName||''}`.trim() || 'Unknown';
-}
-function lifespan(p) {
-  const b = p.birthYear ? p.birthYear : '?';
-  const d = p.deathYear ? p.deathYear : (p.birthYear ? 'present' : '?');
-  return `${b} – ${d}`;
+// Validate Supabase setup BEFORE using it
+if (!SUPABASE_URL || SUPABASE_URL.includes("YOUR_")) {
+  console.error("Supabase URL not set");
+} else if (!SUPABASE_KEY || SUPABASE_KEY.includes("YOUR_")) {
+  console.error("Supabase Key not set");
+} else {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 }
 
-// ─── AUTH CONTEXT (localStorage-backed) ───────────────────────────────────────
-function useAuth() {
-  const [user, setUser] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('al_user')) || null; } catch { return null; }
-  });
-  const [trees, setTrees] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('al_trees')) || []; } catch { return []; }
-  });
+function App(){
+  const [user,setUser] = useState(null);
+  const [email,setEmail] = useState("");
+  const [password,setPassword] = useState("");
+  const [trees,setTrees] = useState([]);
+  const [newTree,setNewTree] = useState("");
+  const [error,setError] = useState("");
 
-  const saveUser = (u) => { setUser(u); localStorage.setItem('al_user', JSON.stringify(u)); };
-  const saveTrees = (t) => { setTrees(t); localStorage.setItem('al_trees', JSON.stringify(t)); };
+  useEffect(()=>{
+    if (supabase) checkUser();
+  },[]);
 
-  const signup = (email, password, name, region) => {
-    const users = JSON.parse(localStorage.getItem('al_users') || '[]');
-    if (users.find(u => u.email === email)) return { error: 'An account with this email already exists.' };
-    const newUser = { id: uid(), email, name, region, createdAt: new Date().toISOString(), avatar: null };
-    users.push({ ...newUser, password });
-    localStorage.setItem('al_users', JSON.stringify(users));
-    // create default tree
-    const defaultTree = {
-      id: 'tree_' + uid(),
-      name: `${name}'s Family Tree`,
-      userId: newUser.id,
-      persons: SAMPLE_PERSONS,
-      photos: SAMPLE_PHOTOS,
-      gedFiles: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    const allTrees = JSON.parse(localStorage.getItem('al_all_trees') || '[]');
-    allTrees.push(defaultTree);
-    localStorage.setItem('al_all_trees', JSON.stringify(allTrees));
-    saveTrees([defaultTree]);
-    saveUser(newUser);
-    return { ok: true };
-  };
+  const checkUser = async ()=>{
+    const { data } = await supabase.auth.getUser();
+    if(data?.user){
+      setUser(data.user);
+      loadTrees(data.user.id);
+    }
+  }
 
-  const login = (email, password) => {
-    const users = JSON.parse(localStorage.getItem('al_users') || '[]');
-    const found = users.find(u => u.email === email && u.password === password);
-    if (!found) return { error: 'Invalid email or password.' };
-    const { password: _, ...userClean } = found;
-    const allTrees = JSON.parse(localStorage.getItem('al_all_trees') || '[]');
-    const userTrees = allTrees.filter(t => t.userId === found.id);
-    saveTrees(userTrees);
-    saveUser(userClean);
-    return { ok: true };
-  };
+  const signUp = async ()=>{
+    if(!supabase) return setError("Supabase not configured");
+    const { error } = await supabase.auth.signUp({ email,password });
+    if(error) setError(error.message);
+    else alert("Check your email to confirm");
+  }
 
-  const logout = () => { setUser(null); setTrees([]); localStorage.removeItem('al_user'); };
+  const login = async ()=>{
+    if(!supabase) return setError("Supabase not configured");
+    const { data,error } = await supabase.auth.signInWithPassword({ email,password });
+    if(error) setError(error.message);
+    else{
+      setUser(data.user);
+      loadTrees(data.user.id);
+    }
+  }
 
-  const updateTree = (treeId, updater) => {
-    const allTrees = JSON.parse(localStorage.getItem('al_all_trees') || '[]');
-    const idx = allTrees.findIndex(t => t.id === treeId);
-    if (idx < 0) return;
-    allTrees[idx] = { ...allTrees[idx], ...updater(allTrees[idx]), updatedAt: new Date().toISOString() };
-    localStorage.setItem('al_all_trees', JSON.stringify(allTrees));
-    setTrees(prev => prev.map(t => t.id === treeId ? allTrees[idx] : t));
-  };
+  const logout = async ()=>{
+    await supabase.auth.signOut();
+    setUser(null);
+    setTrees([]);
+  }
 
-  const createTree = (name) => {
-    const newTree = {
-      id: 'tree_' + uid(), name, userId: user.id,
-      persons: [], photos: [], gedFiles: [],
-      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
-    };
-    const allTrees = JSON.parse(localStorage.getItem('al_all_trees') || '[]');
-    allTrees.push(newTree);
-    localStorage.setItem('al_all_trees', JSON.stringify(allTrees));
-    const updated = [...trees, newTree];
-    saveTrees(updated);
-    return newTree;
-  };
+  const loadTrees = async (userId)=>{
+    const { data, error } = await supabase
+      .from("family_trees")
+      .select("*")
+      .eq("user_id", userId);
 
-  return { user, trees, signup, login, logout, updateTree, createTree };
-}
+    if(error){
+      console.error(error);
+      setError("Failed to load trees");
+    }
 
-// ─── ICONS ────────────────────────────────────────────────────────────────────
-const Icon = ({ name, size = 16 }) => {
-  const icons = {
-    home: '🏠', tree: '🌳', search: '🔍', person: '👤', photo: '🖼️',
-    upload: '⬆️', settings: '⚙️', logout: '🚪', plus: '➕', edit: '✏️',
-    trash: '🗑️', close: '✕', check: '✓', bell: '🔔', hint: '💡',
-    dna: '🧬', doc: '📄', print: '🖨️', calendar: '📅', location: '📍',
-    family: '👨‍👩‍👧‍👦', male: '♂', female: '♀', ged: '📋', zoom_in: '🔍',
-    zoom_out: '🔎', expand: '↔️', star: '⭐', link: '🔗', download: '⬇️',
-    share: '📤', eye: '👁️', filter: '🔽', chart: '📊', message: '💬',
-    heart: '❤️', globe: '🌍', arrow_right: '→', arrow_left: '←',
-    world: '🌐', book: '📚', crown: '👑',
-  };
-  return <span style={{fontSize: size, lineHeight:1}} role="img">{icons[name] || '•'}</span>;
-};
+    setTrees(data || []);
+  }
 
-// ─── LOGO ─────────────────────────────────────────────────────────────────────
-const Logo = ({ size = 32 }) => (
-  <svg width={size} height={size} viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="18" cy="18" r="18" fill="#2d7a38"/>
-    <circle cx="18" cy="9" r="3" fill="#8ecf98"/>
-    <circle cx="11" cy="19" r="2.5" fill="#8ecf98"/>
-    <circle cx="25" cy="19" r="2.5" fill="#8ecf98"/>
-    <circle cx="8" cy="28" r="2" fill="#c2e8c9"/><circle cx="14" cy="28" r="2" fill="#c2e8c9"/>
-    <circle cx="22" cy="28" r="2" fill="#c2e8c9"/><circle cx="28" cy="28" r="2" fill="#c2e8c9"/>
-    <line x1="18" y1="12" x2="11" y2="16.5" stroke="#5ab068" strokeWidth="1.2"/>
-    <line x1="18" y1="12" x2="25" y2="16.5" stroke="#5ab068" strokeWidth="1.2"/>
-    <line x1="11" y1="21.5" x2="8" y2="26" stroke="#5ab068" strokeWidth="1.2"/>
-    <line x1="11" y1="21.5" x2="14" y2="26" stroke="#5ab068" strokeWidth="1.2"/>
-    <line x1="25" y1="21.5" x2="22" y2="26" stroke="#5ab068" strokeWidth="1.2"/>
-    <line x1="25" y1="21.5" x2="28" y2="26" stroke="#5ab068" strokeWidth="1.2"/>
-  </svg>
-);
+  const createTree = async ()=>{
+    if(!newTree) return;
 
-// ─── AVATAR ───────────────────────────────────────────────────────────────────
-const Avatar = ({ person, size = 48 }) => {
-  if (person?.photoUrl) return <img src={person.photoUrl} alt={fullName(person)} style={{width:size,height:size,borderRadius:'50%',objectFit:'cover',border:`2px solid var(--g200)`}}/>;
-  const bg = person?.gender === 'female' ? '#fce4e4' : 'var(--g100)';
-  const col = person?.gender === 'female' ? '#c05050' : 'var(--g600)';
-  return <div style={{width:size,height:size,borderRadius:'50%',background:bg,border:`2px solid var(--g200)`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Quicksand',sans-serif",fontWeight:700,fontSize:size*0.3,color:col,flexShrink:0}}>{initials(person||{firstName:'?',lastName:'?'})}</div>;
-};
+    const { error } = await supabase.from("family_trees").insert([
+      { tree_name:newTree, user_id:user.id }
+    ]);
 
-// ─── NAV COMPONENT ────────────────────────────────────────────────────────────
-const Nav = ({ user, onLogin, onSignup, onLogout, onNav, page }) => (
-  <nav className="nav">
-    <div className="nav-logo" onClick={() => onNav('home')}>
-      <Logo size={32}/><span className="logo-text">African<span>Lineage</span></span>
-    </div>
-    {!user && (
-      <div className="nav-center">
-        {['About','Features','Pricing','Blog'].map(l => (
-          <button key={l} className="nav-link btn btn-ghost btn-sm" onClick={() => onNav(l.toLowerCase())}>{l}</button>
-        ))}
+    if(error){
+      console.error(error);
+      setError("Failed to create tree");
+      return;
+    }
+
+    setNewTree("");
+    loadTrees(user.id);
+  }
+
+  // 🔴 If Supabase not configured
+  if(!supabase){
+    return (
+      <div className="container">
+        <h2>Setup Required</h2>
+        <p>Please add your Supabase credentials:</p>
+        <ul>
+          <li>SUPABASE_URL</li>
+          <li>SUPABASE_ANON_KEY</li>
+        </ul>
+        <p>Go to Supabase → Settings → API</p>
       </div>
-    )}
-    {user && (
-      <div className="nav-center">
-        {[['dashboard','🏠 Overview'],['trees','🌳 Trees'],['search','🔍 Search'],['hints','💡 Hints'],['photos','🖼️ Media']].map(([k,l]) => (
-          <button key={k} className={`nav-link btn btn-sm ${page===k?'btn-outline-green':''}`} onClick={() => onNav(k)}>{l}</button>
-        ))}
+    );
+  }
+
+  if(!user){
+    return (
+      <div className="container">
+        <h2>Login / Signup</h2>
+        <input placeholder="Email" onChange={e=>setEmail(e.target.value)} />
+        <input placeholder="Password" type="password" onChange={e=>setPassword(e.target.value)} />
+        <button onClick={login}>Login</button>
+        <button onClick={signUp} style={{marginLeft:10}}>Sign Up</button>
+        {error && <div className="error">{error}</div>}
       </div>
-    )}
-    <div className="nav-right">
-      {!user ? (
-        <>
-          <button className="btn btn-ghost btn-sm" onClick={onLogin}>Sign in</button>
-          <button className="btn btn-primary btn-sm" onClick={onSignup}>Get Started Free</button>
-        </>
-      ) : (
-        <div className="flex items-center gap-2">
-          <span style={{fontSize:'.82rem',color:'var(--tl)'}}>Hi, {user.name?.split(' ')[0]}</span>
-          <button className="btn btn-ghost btn-sm" onClick={() => onNav('settings')}>⚙️</button>
-          <button className="btn btn-ghost btn-sm" onClick={onLogout} title="Sign out">🚪</button>
-        </div>
-      )}
-    </div>
-  </nav>
-);
-
-// ─── AUTH MODALS ──────────────────────────────────────────────────────────────
-const LoginModal = ({ onClose, onSuccess, onSwitchToSignup }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault(); setError(''); setLoading(true);
-    setTimeout(() => {
-      const res = onSuccess(email, password);
-      if (res.error) setError(res.error);
-      setLoading(false);
-    }, 600);
-  };
+    );
+  }
 
   return (
-    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal">
-        <button className="modal-close" onClick={onClose}>✕</button>
-        <div className="text-center mb-3">
-          <Logo size={40}/><h2 className="mt-2">Welcome Back</h2>
-          <p className="modal-sub">Sign in to continue your ancestry journey</p>
-        </div>
-        {error && <div className="form-error">{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Email address</label>
-            <input className="form-input" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" required/>
-          </div>
-          <div className="form-group">
-            <label className="form-label">Password</label>
-            <input className="form-input" type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••" required/>
-          </div>
-          <button className="btn btn-primary w-full mt-2" type="submit" disabled={loading} style={{justifyContent:'center'}}>
-            {loading ? <span className="spin">⏳</span> : 'Sign In'}
-          </button>
-        </form>
-        <div className="form-divider">or</div>
-        <p className="text-center" style={{fontSize:'.875rem',color:'var(--tl)'}}>
-          New to AfricanLineage? <span className="form-link" onClick={onSwitchToSignup}>Create free account →</span>
-        </p>
-      </div>
-    </div>
-  );
-};
+    <div className="container">
+      <h2>Dashboard</h2>
+      <button onClick={logout}>Logout</button>
 
-const SignupModal = ({ onClose, onSuccess, onSwitchToLogin }) => {
-  const [form, setForm] = useState({ name:'', email:'', password:'', confirm:'', region:'', ancestorName:'' });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const set = (k) => e => setForm(f=>({...f,[k]:e.target.value}));
-
-  const handleSubmit = (e) => {
-    e.preventDefault(); setError('');
-    if (form.password !== form.confirm) return setError('Passwords do not match.');
-    if (form.password.length < 6) return setError('Password must be at least 6 characters.');
-    setLoading(true);
-    setTimeout(() => {
-      const res = onSuccess(form.email, form.password, form.name, form.region);
-      if (res.error) setError(res.error);
-      setLoading(false);
-    }, 700);
-  };
-
-  const regions = ['West Africa','East Africa','Central Africa','Southern Africa','North Africa','African Diaspora – Americas','African Diaspora – UK/Europe','African Diaspora – Caribbean'];
-
-  return (
-    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal" style={{maxWidth:500}}>
-        <button className="modal-close" onClick={onClose}>✕</button>
-        <div className="text-center mb-3"><Logo size={40}/><h2 className="mt-2">Create Your Profile</h2><p className="modal-sub">Begin your African ancestry journey</p></div>
-        {error && <div className="form-error">{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group"><label className="form-label">Full Name</label><input className="form-input" value={form.name} onChange={set('name')} placeholder="Kofi Mensah" required/></div>
-          <div className="form-group"><label className="form-label">Email Address</label><input className="form-input" type="email" value={form.email} onChange={set('email')} placeholder="kofi@example.com" required/></div>
-          <div className="form-row">
-            <div className="form-group"><label className="form-label">Password</label><input className="form-input" type="password" value={form.password} onChange={set('password')} placeholder="Min 6 chars" required/></div>
-            <div className="form-group"><label className="form-label">Confirm Password</label><input className="form-input" type="password" value={form.confirm} onChange={set('confirm')} placeholder="Repeat" required/></div>
-          </div>
-          <div className="form-group">
-            <label className="form-label">Ancestral Region</label>
-            <select className="form-input" value={form.region} onChange={set('region')}>
-              <option value="">Select region…</option>
-              {regions.map(r=><option key={r} value={r}>{r}</option>)}
-            </select>
-          </div>
-          <div className="form-group"><label className="form-label">First Known Ancestor Name (optional)</label><input className="form-input" value={form.ancestorName} onChange={set('ancestorName')} placeholder="e.g. Kwame Mensah"/></div>
-          <button className="btn btn-primary w-full mt-2" type="submit" disabled={loading} style={{justifyContent:'center'}}>
-            {loading ? <span className="spin">⏳</span> : 'Create Free Account'}
-          </button>
-        </form>
-        <p className="text-center mt-3" style={{fontSize:'.82rem',color:'var(--tl)'}}>
-          Already have an account? <span className="form-link" onClick={onSwitchToLogin}>Sign in →</span>
-        </p>
-      </div>
-    </div>
-  );
-};
-
-// ─── PERSON FORM ──────────────────────────────────────────────────────────────
-const PersonForm = ({ person, persons, onSave, onCancel, treeId }) => {
-  const blank = { id:uid(), firstName:'', lastName:'', gender:'male', birthYear:'', birthPlace:'', deathYear:'', deathPlace:'', occupation:'', religion:'', nationality:'', notes:'', motherId:'', fatherId:'', spouseId:'', photoUrl:'' };
-  const [form, setForm] = useState(person ? { ...blank, ...person } : blank);
-  const set = k => e => setForm(f=>({...f,[k]:e.target.value}));
-  const others = persons.filter(p => p.id !== form.id);
-
-  return (
-    <div>
-      <div className="form-row">
-        <div className="form-group"><label className="form-label">First Name *</label><input className="form-input" value={form.firstName} onChange={set('firstName')} required/></div>
-        <div className="form-group"><label className="form-label">Last Name *</label><input className="form-input" value={form.lastName} onChange={set('lastName')} required/></div>
-      </div>
-      <div className="form-row">
-        <div className="form-group"><label className="form-label">Gender</label>
-          <select className="form-input" value={form.gender} onChange={set('gender')}>
-            <option value="male">Male</option><option value="female">Female</option><option value="other">Other</option>
-          </select>
-        </div>
-        <div className="form-group"><label className="form-label">Occupation</label><input className="form-input" value={form.occupation} onChange={set('occupation')}/></div>
-      </div>
-      <div className="form-row">
-        <div className="form-group"><label className="form-label">Birth Year</label><input className="form-input" type="number" value={form.birthYear} onChange={set('birthYear')} placeholder="e.g. 1945"/></div>
-        <div className="form-group"><label className="form-label">Birth Place</label><input className="form-input" value={form.birthPlace} onChange={set('birthPlace')} placeholder="City, Country"/></div>
-      </div>
-      <div className="form-row">
-        <div className="form-group"><label className="form-label">Death Year (leave blank if living)</label><input className="form-input" type="number" value={form.deathYear} onChange={set('deathYear')}/></div>
-        <div className="form-group"><label className="form-label">Death Place</label><input className="form-input" value={form.deathPlace} onChange={set('deathPlace')}/></div>
-      </div>
-      <div className="form-row">
-        <div className="form-group"><label className="form-label">Nationality</label><input className="form-input" value={form.nationality} onChange={set('nationality')}/></div>
-        <div className="form-group"><label className="form-label">Religion</label><input className="form-input" value={form.religion} onChange={set('religion')}/></div>
-      </div>
-      <div className="form-row">
-        <div className="form-group"><label className="form-label">Father</label>
-          <select className="form-input" value={form.fatherId} onChange={set('fatherId')}>
-            <option value="">None</option>
-            {others.filter(p=>p.gender==='male').map(p=><option key={p.id} value={p.id}>{fullName(p)}</option>)}
-          </select>
-        </div>
-        <div className="form-group"><label className="form-label">Mother</label>
-          <select className="form-input" value={form.motherId} onChange={set('motherId')}>
-            <option value="">None</option>
-            {others.filter(p=>p.gender==='female').map(p=><option key={p.id} value={p.id}>{fullName(p)}</option>)}
-          </select>
-        </div>
-      </div>
-      <div className="form-group"><label className="form-label">Spouse / Partner</label>
-        <select className="form-input" value={form.spouseId} onChange={set('spouseId')}>
-          <option value="">None</option>
-          {others.map(p=><option key={p.id} value={p.id}>{fullName(p)}</option>)}
-        </select>
-      </div>
-      <div className="form-group"><label className="form-label">Photo URL (optional)</label><input className="form-input" value={form.photoUrl} onChange={set('photoUrl')} placeholder="https://…"/></div>
-      <div className="form-group"><label className="form-label">Notes / Biography</label><textarea className="form-input" rows={3} value={form.notes} onChange={set('notes')} placeholder="Life story, achievements, memories…" style={{resize:'vertical'}}/></div>
-      <div className="flex gap-2 mt-3 justify-between">
-        <button className="btn btn-ghost" onClick={onCancel}>Cancel</button>
-        <button className="btn btn-primary" onClick={() => onSave(form)}>Save Person</button>
-      </div>
-    </div>
-  );
-};
-
-// ─── PERSON DETAIL MODAL ──────────────────────────────────────────────────────
-const PersonDetail = ({ person, persons, onEdit, onDelete, onClose }) => {
-  const father = persons.find(p => p.id === person.fatherId);
-  const mother = persons.find(p => p.id === person.motherId);
-  const spouse = persons.find(p => p.id === person.spouseId);
-  const children = persons.filter(p => p.fatherId === person.id || p.motherId === person.id);
-
-  return (
-    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal modal-lg">
-        <button className="modal-close" onClick={onClose}>✕</button>
-        <div className="flex gap-3 items-center mb-3">
-          <Avatar person={person} size={72}/>
-          <div>
-            <h2 style={{fontSize:'1.5rem'}}>{fullName(person)}</h2>
-            <p style={{color:'var(--tl)',fontSize:'.875rem'}}>{lifespan(person)}{person.birthPlace ? ` · ${person.birthPlace}` : ''}</p>
-            {person.occupation && <span className="badge badge-green mt-1">{person.occupation}</span>}
-          </div>
-          <div className="flex gap-2" style={{marginLeft:'auto'}}>
-            <button className="btn btn-secondary btn-sm" onClick={onEdit}>✏️ Edit</button>
-            <button className="btn btn-danger btn-sm" onClick={() => { if(confirm('Delete this person?')) { onDelete(person.id); onClose(); } }}>🗑️</button>
-          </div>
-        </div>
-        <div className="divider"/>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.5rem'}}>
-          <div>
-            <h4 style={{fontSize:'.8rem',color:'var(--tl)',textTransform:'uppercase',letterSpacing:'.08em',marginBottom:'.75rem'}}>Personal Details</h4>
-            {[['Gender',person.gender],['Nationality',person.nationality],['Religion',person.religion],['Occupation',person.occupation]].filter(([,v])=>v).map(([l,v])=>(
-              <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'.45rem 0',borderBottom:'1px solid var(--g50)',fontSize:'.875rem'}}>
-                <span style={{color:'var(--tl)'}}>{l}</span><span style={{fontWeight:600,color:'var(--g900)'}}>{v}</span>
-              </div>
-            ))}
-          </div>
-          <div>
-            <h4 style={{fontSize:'.8rem',color:'var(--tl)',textTransform:'uppercase',letterSpacing:'.08em',marginBottom:'.75rem'}}>Family Connections</h4>
-            {father && <div style={{padding:'.45rem 0',borderBottom:'1px solid var(--g50)',fontSize:'.875rem',display:'flex',justifyContent:'space-between'}}><span style={{color:'var(--tl)'}}>Father</span><span style={{color:'var(--g700)',fontWeight:600}}>{fullName(father)}</span></div>}
-            {mother && <div style={{padding:'.45rem 0',borderBottom:'1px solid var(--g50)',fontSize:'.875rem',display:'flex',justifyContent:'space-between'}}><span style={{color:'var(--tl)'}}>Mother</span><span style={{color:'var(--g700)',fontWeight:600}}>{fullName(mother)}</span></div>}
-            {spouse && <div style={{padding:'.45rem 0',borderBottom:'1px solid var(--g50)',fontSize:'.875rem',display:'flex',justifyContent:'space-between'}}><span style={{color:'var(--tl)'}}>Spouse</span><span style={{color:'var(--g700)',fontWeight:600}}>{fullName(spouse)}</span></div>}
-            {children.length > 0 && <div style={{padding:'.45rem 0',fontSize:'.875rem',display:'flex',justifyContent:'space-between'}}><span style={{color:'var(--tl)'}}>Children ({children.length})</span><span style={{color:'var(--g700)',fontWeight:600}}>{children.map(fullName).join(', ')}</span></div>}
-          </div>
-        </div>
-        {person.notes && <>
-          <div className="divider"/>
-          <div>
-            <h4 style={{fontSize:'.8rem',color:'var(--tl)',textTransform:'uppercase',letterSpacing:'.08em',marginBottom:'.5rem'}}>Biography & Notes</h4>
-            <p style={{fontSize:'.9rem',color:'var(--tm)',lineHeight:1.7}}>{person.notes}</p>
-          </div>
-        </>}
-      </div>
-    </div>
-  );
-};
-
-// ─── FAMILY TREE VISUAL ───────────────────────────────────────────────────────
-const FamilyTreeView = ({ persons, onSelectPerson, selectedId }) => {
-  const [scale, setScale] = useState(1);
-  const NODE_W = 160, NODE_H = 70, H_GAP = 30, V_GAP = 90;
-
-  // Group by generation
-  const roots = persons.filter(p => !p.fatherId && !p.motherId);
-  const gen0 = roots;
-  const gen1 = persons.filter(p => p.fatherId || p.motherId).filter(p => {
-    const f = p.fatherId ? persons.find(x=>x.id===p.fatherId) : null;
-    const m = p.motherId ? persons.find(x=>x.id===p.motherId) : null;
-    return !f?.fatherId && !f?.motherId && !m?.fatherId && !m?.motherId;
-  });
-  const gen2 = persons.filter(p => !gen0.find(x=>x.id===p.id) && !gen1.find(x=>x.id===p.id));
-
-  const gens = [gen0, gen1, gen2].filter(g=>g.length>0);
-  const maxPerRow = Math.max(...gens.map(g=>g.length), 1);
-  const svgW = Math.max(700, maxPerRow * (NODE_W + H_GAP) + 80);
-  const svgH = gens.length * (NODE_H + V_GAP) + 80;
-
-  const positions = {};
-  gens.forEach((gen, gi) => {
-    const totalW = gen.length * NODE_W + (gen.length-1) * H_GAP;
-    const startX = (svgW - totalW) / 2;
-    gen.forEach((p, i) => {
-      positions[p.id] = { x: startX + i*(NODE_W+H_GAP), y: 40 + gi*(NODE_H+V_GAP) };
-    });
-  });
-
-  return (
-    <div style={{overflowX:'auto',overflowY:'auto',background:'#fff',borderRadius:'var(--r-lg)',minHeight:400,border:'1px solid var(--g100)'}}>
-      <div style={{display:'flex',gap:'.5rem',padding:'1rem 1rem .5rem',borderBottom:'1px solid var(--g50)',alignItems:'center'}}>
-        <span style={{fontSize:'.8rem',color:'var(--tl)'}}>Zoom:</span>
-        <button className="btn btn-ghost btn-sm" onClick={()=>setScale(s=>Math.max(.5,s-.1))}>🔍−</button>
-        <span style={{fontSize:'.82rem',color:'var(--tm)',minWidth:36,textAlign:'center'}}>{Math.round(scale*100)}%</span>
-        <button className="btn btn-ghost btn-sm" onClick={()=>setScale(s=>Math.min(2,s+.1))}>🔍+</button>
-        <button className="btn btn-ghost btn-sm" onClick={()=>setScale(1)}>Reset</button>
-      </div>
-      <div style={{overflow:'auto',padding:'1rem',transform:`scale(${scale})`,transformOrigin:'top left',transition:'transform .2s',width:`${100/scale}%`}}>
-        {persons.length === 0 ? (
-          <div className="empty-state"><div className="icon">🌳</div><p>No people added yet. Add your first family member!</p></div>
-        ) : (
-          <svg width={svgW} height={svgH} xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#0f2e14" floodOpacity="0.08"/>
-              </filter>
-            </defs>
-            {/* Connectors */}
-            {persons.map(p => {
-              const pPos = positions[p.id];
-              if (!pPos) return null;
-              const lines = [];
-              if (p.fatherId && positions[p.fatherId]) {
-                const fp = positions[p.fatherId];
-                lines.push(<path key={`f${p.id}`} d={`M${fp.x+NODE_W/2},${fp.y+NODE_H} C${fp.x+NODE_W/2},${fp.y+NODE_H+V_GAP/2} ${pPos.x+NODE_W/2},${pPos.y-V_GAP/2} ${pPos.x+NODE_W/2},${pPos.y}`} stroke="var(--g200)" strokeWidth="1.5" fill="none"/>);
-              }
-              if (p.motherId && positions[p.motherId]) {
-                const mp = positions[p.motherId];
-                lines.push(<path key={`m${p.id}`} d={`M${mp.x+NODE_W/2},${mp.y+NODE_H} C${mp.x+NODE_W/2},${mp.y+NODE_H+V_GAP/2} ${pPos.x+NODE_W/2},${pPos.y-V_GAP/2} ${pPos.x+NODE_W/2},${pPos.y}`} stroke="#e4b0b0" strokeWidth="1.5" fill="none"/>);
-              }
-              if (p.spouseId && positions[p.spouseId] && p.id < p.spouseId) {
-                const sp = positions[p.spouseId];
-                lines.push(<line key={`s${p.id}`} x1={pPos.x+NODE_W} y1={pPos.y+NODE_H/2} x2={sp.x} y2={sp.y+NODE_H/2} stroke="var(--g300)" strokeWidth="2" strokeDasharray="5,3"/>);
-              }
-              return lines;
-            })}
-            {/* Nodes */}
-            {persons.map(p => {
-              const pos = positions[p.id];
-              if (!pos) return null;
-              const isSel = selectedId === p.id;
-              const isF = p.gender === 'female';
-              return (
-                <g key={p.id} transform={`translate(${pos.x},${pos.y})`} onClick={()=>onSelectPerson(p)} style={{cursor:'pointer'}} filter="url(#shadow)">
-                  <rect width={NODE_W} height={NODE_H} rx="10" fill={isSel?'var(--g100)':isF?'#fff8f8':'var(--white)'} stroke={isSel?'var(--g600)':isF?'#e4b0b0':'var(--g300)'} strokeWidth={isSel?2.5:1.5}/>
-                  <circle cx="22" cy="35" r="16" fill={isF?'#fce4e4':'var(--g100)'} stroke={isF?'#e4b0b0':'var(--g200)'} strokeWidth="1"/>
-                  <text x="22" y="40" textAnchor="middle" fontSize="11" fontWeight="700" fill={isF?'#c05050':'var(--g600)'} fontFamily="Quicksand,sans-serif">{initials(p)}</text>
-                  <text x="44" y="28" fontSize="12" fontWeight="700" fill="var(--g900)" fontFamily="Quicksand,sans-serif">{p.firstName}</text>
-                  <text x="44" y="42" fontSize="11" fill="var(--tm)" fontFamily="'Source Sans 3',sans-serif">{p.lastName}</text>
-                  <text x="44" y="56" fontSize="10" fill="var(--tl)" fontFamily="'Source Sans 3',sans-serif">{lifespan(p)}</text>
-                </g>
-              );
-            })}
-          </svg>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// ─── DASHBOARD HOME ───────────────────────────────────────────────────────────
-const DashboardHome = ({ user, trees, onNav }) => {
-  const totalPersons = trees.reduce((s,t)=>(s+t.persons.length),0);
-  const totalPhotos = trees.reduce((s,t)=>(s+t.photos.length),0);
-  return (
-    <div>
-      <div className="dash-header">
-        <h1>Welcome back, {user.name?.split(' ')[0]} 👋</h1>
-        <p>Continue building your African family legacy</p>
-      </div>
-      <div className="dash-grid">
-        {[['🌳','Family Trees',trees.length,'trees'],['👥','People Added',totalPersons,'trees'],['🖼️','Photos & Media',totalPhotos,'photos'],['💡','Hints & Hints',3,'hints']].map(([ic,l,n,nav])=>(
-          <div key={l} className="dash-stat" style={{cursor:'pointer'}} onClick={()=>onNav(nav)}>
-            <span className="dash-stat-n">{n}</span>
-            <span className="dash-stat-l">{ic} {l}</span>
-          </div>
-        ))}
-      </div>
-      <div className="hints-section">
-        <h3>💡 Ancestry Hints for You</h3>
-        {[['🗂️','New Census Record Match','A 1948 Gold Coast Census record may match Kwame Mensah in your tree.','hb-new'],['🧬','DNA Connections Available','3 potential DNA relatives found in our network matching your family tree.','hb-dna'],['📜','Historical Record Found','Marriage certificate for Abena Asante found in Kumasi archives (1966).','hb-new']].map(([ic,t,d,b])=>(
-          <div key={t} className="hint-item">
-            <span className="hint-icon">{ic}</span>
-            <div className="hint-text"><strong>{t}</strong>{d}<span className={`hint-badge ${b}`}>{b==='hb-dna'?'DNA':'NEW'}</span></div>
-          </div>
-        ))}
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.5rem'}}>
-        <div>
-          <h3 style={{fontSize:'1rem',color:'var(--g900)',marginBottom:'1rem'}}>📋 Recent Activity</h3>
-          <div className="timeline">
-            {[['Added Kofi Mensah to your tree','2 days ago'],['Uploaded wedding photo (1966)','5 days ago'],['Connected with possible cousin','1 week ago'],['Created family tree','2 weeks ago']].map(([t,d])=>(
-              <div key={t} className="timeline-item">
-                <div className="timeline-dot"/>
-                <div className="timeline-date">{d}</div>
-                <div className="timeline-content">{t}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div>
-          <h3 style={{fontSize:'1rem',color:'var(--g900)',marginBottom:'1rem'}}>🔔 Notifications</h3>
-          {[['Possible relative: Ama Boateng shares your Kumasi ancestors','2h ago'],['Your tree completion is at 65% – add more details!','1d ago'],['New DNA match: Kweku Asante (3rd cousin estimate)','3d ago']].map(([t,d])=>(
-            <div key={t} className="notification">
-              <div className="notif-dot"/>
-              <div className="notif-text">{t}<div className="notif-time">{d}</div></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ─── TREES PAGE ───────────────────────────────────────────────────────────────
-const TreesPage = ({ trees, updateTree, createTree, user }) => {
-  const [selectedTree, setSelectedTree] = useState(trees[0] || null);
-  const [tab, setTab] = useState('visual');
-  const [showAddPerson, setShowAddPerson] = useState(false);
-  const [editPerson, setEditPerson] = useState(null);
-  const [viewPerson, setViewPerson] = useState(null);
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
-  const [search, setSearch] = useState('');
-  const [showNewTree, setShowNewTree] = useState(false);
-  const [newTreeName, setNewTreeName] = useState('');
-
-  const tree = selectedTree ? trees.find(t=>t.id===selectedTree.id) || selectedTree : null;
-  const persons = tree?.persons || [];
-  const filtered = persons.filter(p => `${p.firstName} ${p.lastName} ${p.birthPlace} ${p.occupation}`.toLowerCase().includes(search.toLowerCase()));
-
-  const savePerson = (p) => {
-    updateTree(tree.id, t => ({
-      ...t, persons: t.persons.find(x=>x.id===p.id) ? t.persons.map(x=>x.id===p.id?p:x) : [...t.persons, p]
-    }));
-    setShowAddPerson(false); setEditPerson(null);
-  };
-  const deletePerson = (id) => updateTree(tree.id, t => ({ ...t, persons: t.persons.filter(p=>p.id!==id) }));
-  const handleNewTree = () => {
-    if (!newTreeName.trim()) return;
-    const t = createTree(newTreeName);
-    setSelectedTree(t); setShowNewTree(false); setNewTreeName('');
-  };
-  const handlePrint = () => window.print();
-
-  return (
-    <div>
-      <div style={{display:'flex',gap:'.75rem',alignItems:'center',marginBottom:'1.5rem',flexWrap:'wrap'}}>
-        <h2 style={{fontSize:'1.3rem',color:'var(--g900)',marginRight:'auto'}}>🌳 Family Trees</h2>
-        <select className="form-input" style={{width:'auto',borderRadius:'100px',padding:'.4rem 2rem .4rem .9rem'}} value={tree?.id||''} onChange={e=>setSelectedTree(trees.find(t=>t.id===e.target.value)||null)}>
-          {trees.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}
-        </select>
-        <button className="btn btn-secondary btn-sm" onClick={()=>setShowNewTree(true)}>➕ New Tree</button>
-        <button className="btn btn-primary btn-sm" onClick={()=>setShowAddPerson(true)}>👤 Add Person</button>
-        <button className="btn btn-ghost btn-sm no-print" onClick={handlePrint}>🖨️ Print</button>
-      </div>
-
-      {showNewTree && (
-        <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowNewTree(false)}>
-          <div className="modal" style={{maxWidth:380}}>
-            <button className="modal-close" onClick={()=>setShowNewTree(false)}>✕</button>
-            <h2>Create New Tree</h2><p className="modal-sub">Name your family tree</p>
-            <div className="form-group"><input className="form-input" value={newTreeName} onChange={e=>setNewTreeName(e.target.value)} placeholder="e.g. The Mensah Family Tree" autoFocus/></div>
-            <button className="btn btn-primary w-full" onClick={handleNewTree} style={{justifyContent:'center'}}>Create Tree</button>
-          </div>
-        </div>
-      )}
-
-      {!tree ? <div className="empty-state"><div className="icon">🌳</div><p>No family trees yet. Create your first tree to get started.</p></div> : (
-        <>
-          <div className="flex gap-2 mb-3" style={{flexWrap:'wrap',alignItems:'center'}}>
-            <input className="form-input" style={{maxWidth:260,borderRadius:'100px'}} value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search people in this tree…"/>
-            <span style={{fontSize:'.82rem',color:'var(--tl)'}}>{persons.length} people in tree</span>
-          </div>
-          <div className="tabs">
-            {[['visual','🌳 Visual Tree'],['list','📋 People List'],['timeline','📅 Timeline'],['stats','📊 Tree Stats']].map(([k,l])=>(
-              <button key={k} className={`tab ${tab===k?'active':''}`} onClick={()=>setTab(k)}>{l}</button>
-            ))}
-          </div>
-
-          {tab === 'visual' && (
-            <FamilyTreeView persons={search?filtered:persons} onSelectPerson={p=>{setViewPerson(p);setSelectedNodeId(p.id)}} selectedId={selectedNodeId}/>
-          )}
-          {tab === 'list' && (
-            <div className="person-list">
-              {filtered.length===0 ? <div className="empty-state"><div className="icon">👤</div><p>No people match your search.</p></div> : filtered.map(p=>(
-                <div key={p.id} className="person-card">
-                  <Avatar person={p} size={52}/>
-                  <div className="person-info">
-                    <div className="person-name">{fullName(p)}</div>
-                    <div className="person-meta">{lifespan(p)}{p.birthPlace?` · ${p.birthPlace}`:''}{p.occupation?` · ${p.occupation}`:''}</div>
-                    <div className="flex gap-1 mt-1">
-                      {p.fatherId && <span className="chip">Has father</span>}
-                      {p.motherId && <span className="chip">Has mother</span>}
-                      {p.spouseId && <span className="chip">Has spouse</span>}
-                      {persons.filter(x=>x.fatherId===p.id||x.motherId===p.id).length>0 && <span className="chip">{persons.filter(x=>x.fatherId===p.id||x.motherId===p.id).length} children</span>}
-                    </div>
-                  </div>
-                  <div className="person-actions">
-                    <button className="btn btn-ghost btn-sm" onClick={()=>setViewPerson(p)}>👁️ View</button>
-                    <button className="btn btn-secondary btn-sm" onClick={()=>setEditPerson(p)}>✏️ Edit</button>
-                    <button className="btn btn-danger btn-sm" onClick={()=>{ if(confirm(`Delete ${fullName(p)}?`)) deletePerson(p.id); }}>🗑️</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {tab === 'timeline' && (
-            <div style={{maxWidth:640}}>
-              <div className="timeline">
-                {[...persons].filter(p=>p.birthYear).sort((a,b)=>a.birthYear-b.birthYear).map(p=>(
-                  <div key={p.id} className="timeline-item" onClick={()=>setViewPerson(p)} style={{cursor:'pointer'}}>
-                    <div className="timeline-dot"/>
-                    <div className="timeline-date">{p.birthYear}</div>
-                    <div className="timeline-content"><strong>{fullName(p)}</strong> born{p.birthPlace?` in ${p.birthPlace}`:''}</div>
-                  </div>
-                ))}
-                {[...persons].filter(p=>p.deathYear).sort((a,b)=>a.deathYear-b.deathYear).map(p=>(
-                  <div key={`d${p.id}`} className="timeline-item">
-                    <div className="timeline-dot" style={{background:'var(--tl)'}}/>
-                    <div className="timeline-date">{p.deathYear}</div>
-                    <div className="timeline-content">{fullName(p)} passed away</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {tab === 'stats' && (
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:'1rem'}}>
-              {[['Total People',persons.length,'👥'],['Male',persons.filter(p=>p.gender==='male').length,'♂️'],['Female',persons.filter(p=>p.gender==='female').length,'♀️'],['Oldest Birth',Math.min(...persons.map(p=>p.birthYear||9999).filter(n=>n<9999)) || 'N/A','📅'],['Locations',new Set(persons.map(p=>p.birthPlace).filter(Boolean)).size,'📍'],['With Photos',persons.filter(p=>p.photoUrl).length,'🖼️']].map(([l,v,ic])=>(
-                <div key={l} className="dash-stat"><span className="dash-stat-n">{v}</span><span className="dash-stat-l">{ic} {l}</span></div>
-              ))}
-              <div className="dash-stat" style={{gridColumn:'1/-1'}}>
-                <span className="dash-stat-l">🌍 Birth Places</span>
-                <div className="flex gap-1 mt-2" style={{flexWrap:'wrap'}}>
-                  {[...new Set(persons.map(p=>p.birthPlace).filter(Boolean))].map(bp=>(
-                    <span key={bp} className="chip">{bp}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </>
-      )}
-
-      {(showAddPerson || editPerson) && (
-        <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&(setShowAddPerson(false),setEditPerson(null))}>
-          <div className="modal modal-lg">
-            <button className="modal-close" onClick={()=>{setShowAddPerson(false);setEditPerson(null);}}>✕</button>
-            <h2>{editPerson?'Edit Person':'Add New Person'}</h2>
-            <p className="modal-sub">{editPerson?`Editing ${fullName(editPerson)}`:'Add a family member to your tree'}</p>
-            <PersonForm person={editPerson||null} persons={persons} onSave={savePerson} onCancel={()=>{setShowAddPerson(false);setEditPerson(null);}} treeId={tree?.id}/>
-          </div>
-        </div>
-      )}
-      {viewPerson && (
-        <PersonDetail person={viewPerson} persons={persons} onEdit={()=>{setEditPerson(viewPerson);setViewPerson(null);}} onDelete={deletePerson} onClose={()=>setViewPerson(null)}/>
-      )}
-    </div>
-  );
-};
-
-// ─── SEARCH PAGE ──────────────────────────────────────────────────────────────
-const SearchPage = ({ trees }) => {
-  const [query, setQuery] = useState('');
-  const [type, setType] = useState('all');
-  const [region, setRegion] = useState('all');
-  const [showPerson, setShowPerson] = useState(null);
-
-  const allPersons = trees.flatMap(t => t.persons.map(p=>({...p,treeName:t.name})));
-  const types = ['all','Census Record','Birth Certificate','Marriage Record','Military Record','Newspaper','Land Deed','Ship Manifest','Burial Record'];
-  const regions = ['all','West Africa','East Africa','Southern Africa','North Africa','Central Africa','UK/Europe'];
-
-  const treeMatches = allPersons.filter(p => !query || `${p.firstName} ${p.lastName} ${p.birthPlace} ${p.occupation} ${p.notes}`.toLowerCase().includes(query.toLowerCase()));
-  const recordMatches = ANCESTRY_RECORDS.filter(r =>
-    (!query || `${r.name} ${r.description} ${r.collection}`.toLowerCase().includes(query.toLowerCase())) &&
-    (type==='all' || r.type===type) &&
-    (region==='all' || r.region.toLowerCase().includes(region.toLowerCase()))
-  );
-
-  return (
-    <div>
-      <div className="dash-header"><h1>🔍 Search Ancestry Records</h1><p>Search your family trees and historical African records</p></div>
-      <div style={{background:'var(--white)',border:'1px solid var(--g100)',borderRadius:'var(--r-lg)',padding:'1.5rem',marginBottom:'1.5rem'}}>
-        <div className="search-bar-main">
-          <input className="form-input" style={{flex:1,borderRadius:'var(--r-md)'}} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search names, places, records… (e.g. Mensah, Accra, 1940s)"/>
-          <button className="btn btn-primary" onClick={()=>{}} style={{borderRadius:'var(--r-md)'}}>🔍 Search</button>
-        </div>
-        <div style={{display:'flex',gap:'.875rem',flexWrap:'wrap'}}>
-          <div style={{flex:1,minWidth:200}}>
-            <label className="form-label">Record Type</label>
-            <select className="form-input" value={type} onChange={e=>setType(e.target.value)}>
-              {types.map(t=><option key={t} value={t}>{t==='all'?'All Types':t}</option>)}
-            </select>
-          </div>
-          <div style={{flex:1,minWidth:200}}>
-            <label className="form-label">Region</label>
-            <select className="form-input" value={region} onChange={e=>setRegion(e.target.value)}>
-              {regions.map(r=><option key={r} value={r}>{r==='all'?'All Regions':r}</option>)}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div className="tabs">
-        <div className="tab active">All Results ({treeMatches.length + recordMatches.length})</div>
-        <div className="tab" style={{color:'var(--tl)'}}>Tree People ({treeMatches.length})</div>
-        <div className="tab" style={{color:'var(--tl)'}}>Historical Records ({recordMatches.length})</div>
-      </div>
-
-      {query || type!=='all' || region!=='all' ? (
-        <>
-          {treeMatches.length > 0 && (
-            <>
-              <h3 style={{fontSize:'.9rem',color:'var(--tl)',textTransform:'uppercase',letterSpacing:'.08em',marginBottom:'.75rem',marginTop:'.5rem'}}>From Your Family Trees</h3>
-              {treeMatches.map(p=>(
-                <div key={p.id} className="search-result" onClick={()=>setShowPerson(p)}>
-                  <div className="flex gap-3 items-center">
-                    <Avatar person={p} size={44}/>
-                    <div style={{flex:1}}>
-                      <div className="result-name">{fullName(p)}</div>
-                      <div className="result-meta">{lifespan(p)} · {p.birthPlace||'Location unknown'} · {p.treeName}</div>
-                      <div className="result-tags">
-                        <span className="tag">🌳 In your tree</span>
-                        {p.occupation && <span className="tag">{p.occupation}</span>}
-                        {p.gender && <span className="tag">{p.gender}</span>}
-                      </div>
-                    </div>
-                    <span style={{color:'var(--g500)',fontSize:'1.2rem'}}>→</span>
-                  </div>
-                </div>
-              ))}
-            </>
-          )}
-          {recordMatches.length > 0 && (
-            <>
-              <h3 style={{fontSize:'.9rem',color:'var(--tl)',textTransform:'uppercase',letterSpacing:'.08em',marginBottom:'.75rem',marginTop:'1.5rem'}}>Historical Records Archive</h3>
-              {recordMatches.map(r=>(
-                <div key={r.id} className="search-result">
-                  <div className="flex items-center gap-3">
-                    <div style={{width:44,height:44,background:'var(--g50)',borderRadius:'var(--r-sm)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.3rem',flexShrink:0}}>📜</div>
-                    <div style={{flex:1}}>
-                      <div className="result-name">{r.name}</div>
-                      <div className="result-meta">{r.year} · {r.region} · {r.collection}</div>
-                      <div style={{fontSize:'.83rem',color:'var(--tm)',marginTop:'.25rem'}}>{r.description}</div>
-                      <div className="result-tags">
-                        <span className="tag">📁 {r.type}</span>
-                        <span className="tag">📍 {r.region}</span>
-                      </div>
-                    </div>
-                    <button className="btn btn-secondary btn-sm">View Record</button>
-                  </div>
-                </div>
-              ))}
-            </>
-          )}
-          {treeMatches.length===0 && recordMatches.length===0 && (
-            <div className="empty-state"><div className="icon">🔍</div><p>No results found for "{query}". Try a different name or location.</p></div>
-          )}
-        </>
-      ) : (
-        <div>
-          <h3 style={{fontSize:'1rem',color:'var(--g900)',marginBottom:'1rem'}}>📚 Browse All Historical Records</h3>
-          {ANCESTRY_RECORDS.map(r=>(
-            <div key={r.id} className="search-result">
-              <div className="flex items-center gap-3">
-                <div style={{width:44,height:44,background:'var(--g50)',borderRadius:'var(--r-sm)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.3rem',flexShrink:0}}>📜</div>
-                <div style={{flex:1}}>
-                  <div className="result-name">{r.name}</div>
-                  <div className="result-meta">{r.year} · {r.region} · {r.collection}</div>
-                  <div style={{fontSize:'.83rem',color:'var(--tm)',marginTop:'.25rem'}}>{r.description}</div>
-                  <div className="result-tags"><span className="tag">📁 {r.type}</span><span className="tag">📍 {r.region}</span></div>
-                </div>
-                <button className="btn btn-secondary btn-sm">View</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {showPerson && (
-        <PersonDetail person={showPerson} persons={trees.flatMap(t=>t.persons)} onEdit={()=>setShowPerson(null)} onDelete={()=>setShowPerson(null)} onClose={()=>setShowPerson(null)}/>
-      )}
-    </div>
-  );
-};
-
-// ─── PHOTOS / MEDIA PAGE ──────────────────────────────────────────────────────
-const PhotosPage = ({ trees, updateTree }) => {
-  const [selectedTree, setSelectedTree] = useState(trees[0]?.id || '');
-  const [tab, setTab] = useState('photos');
-  const [showUpload, setShowUpload] = useState(false);
-  const [drag, setDrag] = useState(false);
-  const fileRef = useRef();
-
-  const tree = trees.find(t=>t.id===selectedTree);
-  const photos = tree?.photos || [];
-  const gedFiles = tree?.gedFiles || [];
-
-  const addPhoto = (name, url) => {
-    updateTree(selectedTree, t => ({ ...t, photos: [...t.photos, { id:photoUid(), name, url, year:new Date().getFullYear(), personIds:[] }] }));
-  };
-  const deletePhoto = (id) => updateTree(selectedTree, t => ({ ...t, photos: t.photos.filter(p=>p.id!==id) }));
-  const handleFileInput = (e) => {
-    const files = Array.from(e.target.files);
-    files.forEach(f => {
-      const url = URL.createObjectURL(f);
-      if (f.name.toLowerCase().endsWith('.ged')) {
-        updateTree(selectedTree, t => ({ ...t, gedFiles: [...t.gedFiles, { id:photoUid(), name:f.name, uploadedAt:new Date().toISOString(), size:f.size }] }));
-        alert(`✅ GEDCOM file "${f.name}" uploaded successfully! Parsing is available in the full backend version.`);
-      } else {
-        addPhoto(f.name.replace(/\.[^.]+$/,''), url);
-      }
-    });
-    setShowUpload(false);
-  };
-
-  return (
-    <div>
-      <div style={{display:'flex',alignItems:'center',gap:'.75rem',marginBottom:'1.5rem',flexWrap:'wrap'}}>
-        <h2 style={{fontSize:'1.3rem',color:'var(--g900)',marginRight:'auto'}}>🖼️ Photos & Media</h2>
-        <select className="form-input" style={{width:'auto',borderRadius:'100px',padding:'.4rem 2rem .4rem .9rem'}} value={selectedTree} onChange={e=>setSelectedTree(e.target.value)}>
-          {trees.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}
-        </select>
-        <button className="btn btn-primary btn-sm" onClick={()=>setShowUpload(true)}>⬆️ Upload</button>
-      </div>
-      <div className="tabs">
-        {[['photos','📸 Photos'],['ged','📋 GEDCOM Files'],['docs','📄 Documents']].map(([k,l])=>(
-          <button key={k} className={`tab ${tab===k?'active':''}`} onClick={()=>setTab(k)}>{l}</button>
-        ))}
-      </div>
-      {tab==='photos' && (
-        <>
-          {photos.length===0 ? (
-            <div className="photo-upload-zone" onClick={()=>setShowUpload(true)}>
-              <div className="icon">📸</div>
-              <p style={{color:'var(--tl)',fontSize:'.9rem',marginBottom:'.5rem'}}>No photos yet</p>
-              <p style={{fontSize:'.8rem',color:'var(--tl)'}}>Click to upload family photos, documents, and memories</p>
-            </div>
-          ) : (
-            <div className="photo-grid">
-              {photos.map(ph=>(
-                <div key={ph.id} className="photo-item" style={{position:'relative'}}>
-                  {ph.url ? <img src={ph.url} alt={ph.name} style={{width:'100%',height:'100%',objectFit:'cover'}}/> : <div className="photo-item-placeholder">📷</div>}
-                  <div style={{position:'absolute',bottom:0,left:0,right:0,background:'linear-gradient(transparent,rgba(0,0,0,.7))',padding:'.5rem .6rem',color:'#fff',fontSize:'.72rem',fontWeight:600}}>{ph.name}</div>
-                  <button onClick={e=>{e.stopPropagation();deletePhoto(ph.id)}} style={{position:'absolute',top:4,right:4,background:'rgba(0,0,0,.5)',color:'#fff',border:'none',borderRadius:'50%',width:22,height:22,fontSize:'.7rem',cursor:'pointer'}}>✕</button>
-                </div>
-              ))}
-              <div className="photo-item" onClick={()=>setShowUpload(true)} style={{background:'var(--g50)',border:'2px dashed var(--g200)',display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:'.3rem',cursor:'pointer',color:'var(--g400)'}}>
-                <span style={{fontSize:'1.5rem'}}>➕</span>
-                <span style={{fontSize:'.72rem',fontWeight:600}}>Add Photo</span>
-              </div>
-            </div>
-          )}
-        </>
-      )}
-      {tab==='ged' && (
-        <div>
-          <div className="photo-upload-zone" onClick={()=>setShowUpload(true)} style={{marginBottom:'1.5rem'}}>
-            <div className="icon">📋</div>
-            <p style={{color:'var(--tm)',fontWeight:600,marginBottom:'.35rem'}}>Upload GEDCOM File (.ged)</p>
-            <p style={{fontSize:'.83rem',color:'var(--tl)'}}>Import your family tree from Ancestry, FamilySearch, or other genealogy software</p>
-          </div>
-          {gedFiles.length===0 ? (
-            <div className="empty-state"><p>No GEDCOM files uploaded yet.</p></div>
-          ) : gedFiles.map(f=>(
-            <div key={f.id} className="search-result" style={{cursor:'default'}}>
-              <div className="flex items-center gap-3">
-                <span style={{fontSize:'2rem'}}>📋</span>
-                <div style={{flex:1}}>
-                  <div className="result-name">{f.name}</div>
-                  <div className="result-meta">Uploaded {new Date(f.uploadedAt).toLocaleDateString()} · {(f.size/1024).toFixed(1)} KB</div>
-                </div>
-                <span className="badge badge-green">Imported</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-      {tab==='docs' && (
-        <div>
-          <div className="photo-upload-zone" onClick={()=>setShowUpload(true)} style={{marginBottom:'1.5rem'}}>
-            <div className="icon">📄</div>
-            <p style={{color:'var(--tm)',fontWeight:600,marginBottom:'.35rem'}}>Upload Documents</p>
-            <p style={{fontSize:'.83rem',color:'var(--tl)'}}>Birth certificates, marriage records, land deeds, letters, and more</p>
-          </div>
-          <div className="empty-state"><p>No documents uploaded yet.</p></div>
-        </div>
-      )}
-      {showUpload && (
-        <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&setShowUpload(false)}>
-          <div className="modal">
-            <button className="modal-close" onClick={()=>setShowUpload(false)}>✕</button>
-            <h2>Upload Files</h2>
-            <p className="modal-sub">Photos (JPG, PNG), GEDCOM files (.ged), or Documents (PDF)</p>
-            <div className={`photo-upload-zone ${drag?'drag':''}`} onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);handleFileInput({target:{files:e.dataTransfer.files}})}} onClick={()=>fileRef.current?.click()}>
-              <div className="icon">⬆️</div>
-              <p style={{color:'var(--tm)',fontWeight:600,marginBottom:'.35rem'}}>Drag & drop or click to browse</p>
-              <p style={{fontSize:'.8rem',color:'var(--tl)'}}>Supports JPG, PNG, GIF, PDF, .ged files</p>
-            </div>
-            <input ref={fileRef} type="file" multiple accept="image/*,.ged,.pdf" style={{display:'none'}} onChange={handleFileInput}/>
-            <div className="divider"/>
-            <p style={{fontSize:'.82rem',color:'var(--tl)',textAlign:'center'}}>Or add by URL:</p>
-            <div style={{display:'flex',gap:'.75rem',marginTop:'.5rem'}}>
-              <input id="url-in" className="form-input" placeholder="https://example.com/photo.jpg" style={{flex:1}}/>
-              <button className="btn btn-primary" onClick={()=>{const v=document.getElementById('url-in').value;if(v){addPhoto('Added photo',v);setShowUpload(false);}}}>Add</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// ─── HINTS PAGE ───────────────────────────────────────────────────────────────
-const HintsPage = ({ trees }) => {
-  const hints = [
-    { id:'h1', icon:'🗂️', type:'Census', title:'1948 Gold Coast Census – Possible Match', person:'Kwame Mensah', confidence:92, desc:'A household record from Accra district matches Kwame Mensah (born ~1942) in your family tree. The record lists a "Kwame Mensah, age 6" in Labadi, Greater Accra.', collection:'Gold Coast National Census 1948', badge:'hb-new' },
-    { id:'h2', icon:'💍', type:'Marriage', title:'Marriage Certificate – Possible Match', person:'Kwame & Abena Mensah', confidence:87, desc:'A 1966 marriage certificate from Accra Magistrate Court may match the union of Kwame Mensah and Abena Asante. The certificate references a ceremony at Wesley Methodist Church.', collection:'Ghana Civil Registration Archive', badge:'hb-new' },
-    { id:'h3', icon:'🧬', type:'DNA', title:'DNA Relative – Kweku Asante', person:'Possible 3rd cousin', confidence:78, desc:'Kweku Asante shares an estimated 48cM of DNA with your tree profile. His ancestor tree includes Asante family members from Kumasi region, overlapping with your family line.', collection:'AfricanLineage DNA Network', badge:'hb-dna' },
-    { id:'h4', icon:'📰', type:'Newspaper', title:'Daily Graphic Article – Name Match', person:'Kofi Mensah', confidence:71, desc:'A 1990 newspaper article mentions "Kofi Mensah" receiving distinction at KNUST engineering graduation ceremony in Kumasi.', collection:'Daily Graphic Digital Archive 1990', badge:'hb-new' },
-    { id:'h5', icon:'⛪', type:'Church Record', title:'Baptism Record – Possible Ancestor', person:'Abena Asante (1945)', confidence:83, desc:'Presbyterian Church baptism record from Kumasi lists an "Abena Asante, daughter of Kojo Asante and Akua Boateng" born 14 March 1945.', collection:'Presbyterian Church of Ghana – Kumasi Parish', badge:'hb-new' },
-    { id:'h6', icon:'🌍', type:'Diaspora', title:'UK Passenger List – Possible Relative', person:'Efua Mensah', confidence:65, desc:'A 1988 UK passenger manifest lists "Efua Mensah, student, travelling from Accra to London Heathrow" — may be related to your tree members.', collection:'UK Border Agency Passenger Records', badge:'hb-new' },
-  ];
-  const [accepted, setAccepted] = useState([]);
-  const [dismissed, setDismissed] = useState([]);
-
-  return (
-    <div>
-      <div className="dash-header">
-        <h1>💡 Ancestry Hints</h1>
-        <p>Potential matches between your family tree and historical records</p>
-      </div>
-      <div className="dash-grid" style={{marginBottom:'1.5rem'}}>
-        {[['Total Hints',hints.length],['Accepted',accepted.length],['Pending',hints.length-accepted.length-dismissed.length],['Dismissed',dismissed.length]].map(([l,n])=>(
-          <div key={l} className="dash-stat"><span className="dash-stat-n">{n}</span><span className="dash-stat-l">{l}</span></div>
-        ))}
-      </div>
-      {hints.filter(h=>!dismissed.includes(h.id)).map(h=>(
-        <div key={h.id} style={{background:'var(--white)',border:`1.5px solid ${accepted.includes(h.id)?'var(--g300)':'var(--g100)'}`,borderRadius:'var(--r-lg)',padding:'1.5rem',marginBottom:'1rem',transition:'border-color .2s'}}>
-          <div className="flex items-center gap-3" style={{marginBottom:'1rem'}}>
-            <span style={{fontSize:'1.75rem'}}>{h.icon}</span>
-            <div style={{flex:1}}>
-              <div style={{display:'flex',alignItems:'center',gap:'.5rem',flexWrap:'wrap'}}>
-                <strong style={{color:'var(--g900)',fontSize:'.975rem'}}>{h.title}</strong>
-                <span className={`badge ${h.badge==='hb-dna'?'badge-blue':'badge-green'}`}>{h.badge==='hb-dna'?'DNA':'NEW'}</span>
-                {accepted.includes(h.id) && <span className="badge badge-green">✓ Accepted</span>}
-              </div>
-              <div style={{fontSize:'.8rem',color:'var(--tl)',marginTop:'.2rem'}}>Matching: {h.person} · {h.collection}</div>
-            </div>
-            <div style={{textAlign:'center',flexShrink:0}}>
-              <div style={{fontFamily:"'Quicksand',sans-serif",fontWeight:700,fontSize:'1.3rem',color:'var(--g600)'}}>{h.confidence}%</div>
-              <div style={{fontSize:'.7rem',color:'var(--tl)'}}>match</div>
-              <div className="progress-bar" style={{width:60,marginTop:'.3rem'}}><div className="progress-fill" style={{width:`${h.confidence}%`}}/></div>
-            </div>
-          </div>
-          <p style={{fontSize:'.875rem',color:'var(--tm)',lineHeight:1.7,marginBottom:'1rem'}}>{h.desc}</p>
-          <div className="flex gap-2">
-            {!accepted.includes(h.id) && <button className="btn btn-primary btn-sm" onClick={()=>setAccepted(a=>[...a,h.id])}>✓ Accept Hint</button>}
-            <button className="btn btn-secondary btn-sm">📄 View Record</button>
-            <button className="btn btn-ghost btn-sm" onClick={()=>setDismissed(d=>[...d,h.id])}>✕ Dismiss</button>
-          </div>
-        </div>
-      ))}
-      {dismissed.length > 0 && (
-        <button className="btn btn-ghost btn-sm" onClick={()=>setDismissed([])}>Show {dismissed.length} dismissed hint{dismissed.length>1?'s':''}</button>
-      )}
-    </div>
-  );
-};
-
-// ─── SETTINGS PAGE ────────────────────────────────────────────────────────────
-const SettingsPage = ({ user }) => {
-  const [name, setName] = useState(user.name || '');
-  const [saved, setSaved] = useState(false);
-  const saveProfile = () => {
-    const stored = JSON.parse(localStorage.getItem('al_user'));
-    if (stored) { stored.name = name; localStorage.setItem('al_user', JSON.stringify(stored)); }
-    setSaved(true); setTimeout(()=>setSaved(false), 2500);
-  };
-  return (
-    <div style={{maxWidth:600}}>
-      <div className="dash-header"><h1>⚙️ Settings</h1><p>Manage your account and preferences</p></div>
-      {saved && <div className="form-success">✓ Profile saved successfully!</div>}
-      <div className="card mb-3">
-        <h3 style={{marginBottom:'1rem'}}>Profile Details</h3>
-        <div className="form-group"><label className="form-label">Full Name</label><input className="form-input" value={name} onChange={e=>setName(e.target.value)}/></div>
-        <div className="form-group"><label className="form-label">Email</label><input className="form-input" value={user.email} disabled style={{opacity:.6}}/></div>
-        <div className="form-group"><label className="form-label">Member Since</label><input className="form-input" value={new Date(user.createdAt||Date.now()).toLocaleDateString()} disabled style={{opacity:.6}}/></div>
-        <button className="btn btn-primary" onClick={saveProfile}>Save Changes</button>
-      </div>
-      <div className="card mb-3">
-        <h3 style={{marginBottom:'1rem'}}>Privacy Settings</h3>
-        {[['Make my tree public','Allow others to find my family tree in public search',true],['Share hints with community','Allow your hints to help other users',true],['DNA matching','Enable DNA relative matching',true]].map(([l,d,v])=>(
-          <div key={l} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'.875rem 0',borderBottom:'1px solid var(--g50)'}}>
-            <div><div style={{fontWeight:600,fontSize:'.9rem',color:'var(--g900)'}}>{l}</div><div style={{fontSize:'.8rem',color:'var(--tl)'}}>{d}</div></div>
-            <label style={{cursor:'pointer',position:'relative',display:'inline-block',width:40,height:22}}>
-              <input type="checkbox" defaultChecked={v} style={{opacity:0,width:0,height:0}}/>
-              <span style={{position:'absolute',inset:0,background:'var(--g400)',borderRadius:11,transition:'.3s'}}/>
-            </label>
-          </div>
-        ))}
-      </div>
       <div className="card">
-        <h3 style={{marginBottom:'1rem',color:'#c53030'}}>Danger Zone</h3>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-          <div><div style={{fontWeight:600,fontSize:'.9rem',color:'var(--g900)'}}>Delete Account</div><div style={{fontSize:'.8rem',color:'var(--tl)'}}>Permanently delete your account and all data</div></div>
-          <button className="btn btn-danger btn-sm" onClick={()=>alert('Account deletion would require confirmation via email in the full version.')}>Delete Account</button>
-        </div>
+        <h3>Create Family Tree</h3>
+        <input value={newTree} onChange={e=>setNewTree(e.target.value)} placeholder="Tree name" />
+        <button onClick={createTree}>Create</button>
       </div>
-    </div>
-  );
-};
 
-// ─── HOME PAGE (landing) ───────────────────────────────────────────────────────
-const HomePage = ({ onSignup, onLogin }) => {
-  const [heroSearch, setHeroSearch] = useState('');
-  return (
-    <div>
-      <section className="hero">
-        <div className="hero-dots"/>
-        <div className="hero-badge">🌱 Roots · Stories · Connections</div>
-        <h1>Discover Your <em>African</em> Ancestry</h1>
-        <p className="hero-sub">Build your family tree, connect with relatives across the diaspora, and preserve your heritage — for generations to come.</p>
-        <div className="hero-actions">
-          <button className="btn btn-primary btn-lg" onClick={onSignup}>🌳 Start Your Free Tree</button>
-          <button className="btn btn-outline-green btn-lg" onClick={onLogin}>Sign In</button>
-        </div>
-        <div className="search-hero">
-          <span>🔍</span>
-          <input value={heroSearch} onChange={e=>setHeroSearch(e.target.value)} placeholder="Search an ancestor name, surname, or region…"/>
-          <button className="btn btn-primary btn-sm" onClick={()=>alert(`Searching for "${heroSearch}"… Sign up to see full results!`)}>Search</button>
-        </div>
-      </section>
-      <div className="stats-strip">
-        {[['120K+','Family profiles'],['54','African nations'],['2.4M+','Records indexed'],['38K+','Connections made']].map(([n,l])=>(
-          <div key={l} className="stat"><span className="stat-n">{n}</span><span className="stat-l">{l}</span></div>
+      <div className="card">
+        <h3>Your Trees</h3>
+        {trees.length === 0 && <p>No trees yet</p>}
+        {trees.map(t => (
+          <div key={t.id} style={{marginBottom:8}}>
+            🌳 {t.tree_name}
+          </div>
         ))}
       </div>
-      <section className="section">
-        <p className="section-label">How It Works</p>
-        <h2 className="section-title">Your ancestry journey in 4 steps</h2>
-        <p className="section-sub">From first search to a full family archive — we make it simple.</p>
-        <div className="card-grid">
-          {[['👤','Create Profile','Sign up and enter your name, known ancestors, and ancestral region.'],['🌿','Build Your Tree','Add relatives, explore generational links, and enrich entries with photos and documents.'],['🤝','Discover Relatives','Our smart search finds potential matches across the diaspora.'],['📖','Preserve Heritage','Record oral traditions and pass a living archive to future generations.']].map(([ic,t,d],i)=>(
-            <div key={t} className="card">
-              <div style={{fontFamily:"'Quicksand',sans-serif",fontWeight:700,fontSize:'2.5rem',color:'var(--g100)',lineHeight:1,marginBottom:'.5rem'}}>0{i+1}</div>
-              <div className="card-icon" style={{background:'var(--g50)'}}>{ic}</div>
-              <h3>{t}</h3><p>{d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-      <section className="section bg-light">
-        <p className="section-label">Features</p>
-        <h2 className="section-title">Everything your lineage needs</h2>
-        <p className="section-sub">Powerful tools built to honour the depth of African heritage.</p>
-        <div className="card-grid">
-          {[['🌍','Pan-African Coverage','Records spanning all 54 African nations plus diaspora communities.','var(--g50)'],['🔍','Smart Ancestor Search','Search millions of lineage records by name, region, and time period.','#eef6ff'],['🧬','DNA Connections','Combine genetic ancestry data with traditional research.','#f0f9ff'],['🖼️','Photo & Media Vault','Store photos, audio recordings, and video memories securely.','#fff8e6'],['📋','GEDCOM Import/Export','Import trees from Ancestry, FamilySearch, and other platforms.','#fef3f2'],['💡','Smart Hints','AI-powered hints match your tree against our historical archive.','var(--g50)']].map(([ic,t,d,bg])=>(
-            <div key={t} className="card" style={{borderColor:'transparent'}}>
-              <div className="card-icon" style={{background:bg}}>{ic}</div>
-              <h3>{t}</h3><p>{d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-      <section className="section" style={{background:'var(--g800)',color:'#fff',textAlign:'center'}}>
-        <p className="section-label" style={{color:'var(--g300)'}}>Get Started Today</p>
-        <h2 className="section-title" style={{color:'#fff'}}>Your ancestors' stories are waiting</h2>
-        <p className="section-sub" style={{color:'rgba(255,255,255,.65)'}}>Join thousands of families discovering, connecting, and preserving their African heritage.</p>
-        <div className="hero-actions">
-          <button className="btn btn-white btn-lg" onClick={onSignup}>🌳 Create Free Account</button>
-          <button className="btn btn-outline-white btn-lg" onClick={()=>{}}>Browse Records</button>
-        </div>
-      </section>
-      <footer>
-        <div className="footer-inner">
-          <div className="footer-col">
-            <div style={{fontFamily:"'Quicksand',sans-serif",fontWeight:700,color:'rgba(255,255,255,.8)',marginBottom:'.5rem',fontSize:'1.05rem'}}>African<span style={{color:'var(--g400)'}}>Lineage</span></div>
-            <p style={{fontSize:'.82rem',lineHeight:1.65,maxWidth:200}}>Connecting families across Africa and the diaspora through shared history and heritage.</p>
-          </div>
-          {[['Platform',['Search ancestors','Build family tree','Upload documents','DNA integration','GEDCOM import']],['Company',['About us','Blog','Press','Contact','Careers']],['Legal',['Privacy policy','Terms of service','Cookie settings','Data requests']]].map(([h,links])=>(
-            <div key={h} className="footer-col"><h4>{h}</h4><ul>{links.map(l=><li key={l}><a href="#">{l}</a></li>)}</ul></div>
-          ))}
-        </div>
-        <div className="footer-bottom">© 2025 AfricanLineage.com · All rights reserved · Built with love for the diaspora 🌍</div>
-      </footer>
+
+      {error && <div className="error">{error}</div>}
     </div>
   );
-};
+}
 
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
-const App = () => {
-  const { user, trees, signup, login, logout, updateTree, createTree } = useAuth();
-  const [modal, setModal] = useState(null); // 'login' | 'signup'
-  const [page, setPage] = useState('home');
+// Basic runtime test
+console.log("App initialized successfully");
 
-  const handleLogin = (email, pw) => {
-    const res = login(email, pw);
-    if (res.ok) { setModal(null); setPage('dashboard'); }
-    return res;
-  };
-  const handleSignup = (email, pw, name, region) => {
-    const res = signup(email, pw, name, region);
-    if (res.ok) { setModal(null); setPage('dashboard'); }
-    return res;
-  };
-  const handleLogout = () => { logout(); setPage('home'); };
-  const handleNav = (p) => {
-    if (!user && ['dashboard','trees','search','hints','photos','settings'].includes(p)) return setModal('login');
-    setPage(p);
-  };
-
-  const DashWrapper = ({ children }) => (
-    <div className="dashboard">
-      <div className="sidebar">
-        <div className="sidebar-section">
-          <div className="sidebar-label">Main</div>
-          {[['dashboard','🏠','Overview'],['trees','🌳','Family Trees'],['hints','💡','Hints & Records'],['search','🔍','Search'],['photos','🖼️','Photos & Media']].map(([k,ic,l])=>(
-            <button key={k} className={`sidebar-item ${page===k?'active':''}`} onClick={()=>setPage(k)}>
-              <span className="sidebar-icon">{ic}</span>{l}
-            </button>
-          ))}
-        </div>
-        <div className="sidebar-section">
-          <div className="sidebar-label">Account</div>
-          {[['settings','⚙️','Settings']].map(([k,ic,l])=>(
-            <button key={k} className={`sidebar-item ${page===k?'active':''}`} onClick={()=>setPage(k)}>
-              <span className="sidebar-icon">{ic}</span>{l}
-            </button>
-          ))}
-          <button className="sidebar-item" onClick={handleLogout}><span className="sidebar-icon">🚪</span>Sign Out</button>
-        </div>
-        <div style={{padding:'1rem',marginTop:'auto'}}>
-          <div style={{background:'var(--g50)',borderRadius:'var(--r-md)',padding:'1rem',fontSize:'.78rem',color:'var(--tl)'}}>
-            <div style={{fontWeight:700,color:'var(--g700)',marginBottom:'.35rem'}}>Tree Completion</div>
-            <div className="progress-bar"><div className="progress-fill" style={{width:'65%'}}/></div>
-            <div style={{marginTop:'.35rem'}}>65% complete · Add more details to improve</div>
-          </div>
-        </div>
-      </div>
-      <div className="dash-content">{children}</div>
-    </div>
-  );
-
-  return (
-    <div className="app-wrap">
-      <Nav user={user} onLogin={()=>setModal('login')} onSignup={()=>setModal('signup')} onLogout={handleLogout} onNav={handleNav} page={page}/>
-      <main className="main-content">
-        {!user && page==='home' && <HomePage onSignup={()=>setModal('signup')} onLogin={()=>setModal('login')}/>}
-        {user && page==='dashboard' && <DashWrapper><DashboardHome user={user} trees={trees} onNav={setPage}/></DashWrapper>}
-        {user && page==='trees' && <DashWrapper><TreesPage trees={trees} updateTree={updateTree} createTree={createTree} user={user}/></DashWrapper>}
-        {user && page==='search' && <DashWrapper><SearchPage trees={trees}/></DashWrapper>}
-        {user && page==='photos' && <DashWrapper><PhotosPage trees={trees} updateTree={updateTree}/></DashWrapper>}
-        {user && page==='hints' && <DashWrapper><HintsPage trees={trees}/></DashWrapper>}
-        {user && page==='settings' && <DashWrapper><SettingsPage user={user}/></DashWrapper>}
-      </main>
-      {modal==='login' && <LoginModal onClose={()=>setModal(null)} onSuccess={handleLogin} onSwitchToSignup={()=>setModal('signup')}/>}
-      {modal==='signup' && <SignupModal onClose={()=>setModal(null)} onSuccess={handleSignup} onSwitchToLogin={()=>setModal('login')}/>}
-    </div>
-  );
-};
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 </body>
 </html>
