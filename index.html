@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AfricanLineage - Family Trees</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    h1, h2, h3 { margin-top: 0; }
+    input, button {
+      padding: 10px 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+    input { width: 100%; box-sizing: border-box; }
+    button {
+      background: #2d7a38;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { background: #24652e; }
+    button:disabled { background: #999; cursor: not-allowed; }
+    .error { color: #d32f2f; margin: 10px 0; }
+    .success { color: #2e7d32; margin: 10px 0; }
+    .tree-item {
+      padding: 12px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logout-btn {
+      background: #d32f2f;
+    }
+    .logout-btn:hover { background: #b71c1c; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // === YOUR SUPABASE CREDENTIALS ===
+    const SUPABASE_URL = "https://hvayopsxfurdrhlsyaot.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2YXlvcHN4ZnVyZHJobHN5YW90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODAzNTksImV4cCI6MjA4OTg1NjM1OX0.5rX6tawqghzjUlXKiVBnQl6UVKM1J_zNMsgcGUogAiw";
+
+    let supabase = null;
+
+    // Initialize Supabase safely
+    if (SUPABASE_URL && SUPABASE_ANON_KEY && !SUPABASE_URL.includes("YOUR_") && !SUPABASE_ANON_KEY.includes("YOUR_")) {
+      try {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      } catch (e) {
+        console.error("Failed to create Supabase client:", e);
+      }
+    }
+
+    function App() {
+      const [user, setUser] = useState(null);
+      const [email, setEmail] = useState("");
+      const [password, setPassword] = useState("");
+      const [trees, setTrees] = useState([]);
+      const [newTree, setNewTree] = useState("");
+      const [error, setError] = useState("");
+      const [success, setSuccess] = useState("");
+      const [loading, setLoading] = useState(false);
+
+      useEffect(() => {
+        if (supabase) {
+          checkUser();
+          // Listen for auth changes
+          const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+            if (session?.user) {
+              setUser(session.user);
+              loadTrees(session.user.id);
+            } else {
+              setUser(null);
+              setTrees([]);
+            }
+          });
+          return () => listener.subscription.unsubscribe();
+        }
+      }, []);
+
+      const checkUser = async () => {
+        const { data } = await supabase.auth.getUser();
+        if (data?.user) {
+          setUser(data.user);
+          loadTrees(data.user.id);
+        }
+      };
+
+      const loadTrees = async (userId) => {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from("family_trees")
+          .select("*")
+          .eq("user_id", userId)
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error(error);
+          setError("Failed to load your family trees.");
+        } else {
+          setTrees(data || []);
+        }
+        setLoading(false);
+      };
+
+      const signUp = async () => {
+        if (!email || !password) return setError("Email and password are required.");
+        setLoading(true);
+        setError("");
+        setSuccess("");
+
+        const { data, error } = await supabase.auth.signUp({ email, password });
+
+        if (error) {
+          setError(error.message);
+        } else {
+          setSuccess("Account created! Check your email to confirm (if required). You can try logging in now.");
+          // Optional: auto sign in if confirmation is disabled in your project
+          // await login();
+        }
+        setLoading(false);
+      };
+
+      const login = async () => {
+        if (!email || !password) return setError("Email and password are required.");
+        setLoading(true);
+        setError("");
+        setSuccess("");
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+        if (error) {
+          setError(error.message);
+        } else {
+          setUser(data.user);
+          loadTrees(data.user.id);
+          setSuccess("Logged in successfully!");
+        }
+        setLoading(false);
+      };
+
+      const logout = async () => {
+        await supabase.auth.signOut();
+        setUser(null);
+        setTrees([]);
+        setSuccess("");
+      };
+
+      const createTree = async () => {
+        if (!newTree.trim()) return setError("Please enter a tree name.");
+        setLoading(true);
+        setError("");
+
+        const { error } = await supabase.from("family_trees").insert([
+          { tree_name: newTree.trim(), user_id: user.id }
+        ]);
+
+        if (error) {
+          setError("Failed to create tree: " + error.message);
+        } else {
+          setNewTree("");
+          setSuccess("Family tree created!");
+          loadTrees(user.id);
+        }
+        setLoading(false);
+      };
+
+      // If Supabase not configured
+      if (!supabase) {
+        return React.createElement("div", { className: "container" },
+          React.createElement("div", { className: "card" },
+            React.createElement("h2", null, "Setup Required"),
+            React.createElement("p", null, "Your Supabase project URL appears to be invalid or the project does not exist."),
+            React.createElement("p", null, "Please create a new Supabase project and update SUPABASE_URL and SUPABASE_ANON_KEY in the code."),
+            React.createElement("p", null, "Go to supabase.com → New Project")
+          )
+        );
+      }
+
+      // Login / Signup screen
+      if (!user) {
+        return React.createElement("div", { className: "container" },
+          React.createElement("div", { className: "card" },
+            React.createElement("h2", null, "Welcome to AfricanLineage"),
+            React.createElement("p", null, "Preserve your African family heritage."),
+            React.createElement("input", {
+              type: "email",
+              placeholder: "Email",
+              value: email,
+              onChange: (e) => setEmail(e.target.value)
+            }),
+            React.createElement("input", {
+              type: "password",
+              placeholder: "Password",
+              value: password,
+              onChange: (e) => setPassword(e.target.value)
+            }),
+            React.createElement("button", {
+              onClick: login,
+              disabled: loading,
+              style: { marginRight: "10px" }
+            }, loading ? "Logging in..." : "Login"),
+            React.createElement("button", {
+              onClick: signUp,
+              disabled: loading
+            }, loading ? "Creating..." : "Sign Up"),
+            error && React.createElement("div", { className: "error" }, error),
+            success && React.createElement("div", { className: "success" }, success)
+          )
+        );
+      }
+
+      // Dashboard
+      return React.createElement("div", { className: "container" },
+        React.createElement("div", { className: "card" },
+          React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } },
+            React.createElement("h2", null, "Dashboard"),
+            React.createElement("button", { onClick: logout, className: "logout-btn" }, "Logout")
+          ),
+          React.createElement("p", null, `Welcome, ${user.email}`)
+        ),
+
+        React.createElement("div", { className: "card" },
+          React.createElement("h3", null, "Create New Family Tree"),
+          React.createElement("input", {
+            value: newTree,
+            onChange: (e) => setNewTree(e.target.value),
+            placeholder: "e.g. My Maternal Lineage - Ghana"
+          }),
+          React.createElement("button", {
+            onClick: createTree,
+            disabled: loading || !newTree.trim()
+          }, loading ? "Creating..." : "Create Tree")
+        ),
+
+        React.createElement("div", { className: "card" },
+          React.createElement("h3", null, "Your Family Trees"),
+          loading && React.createElement("p", null, "Loading..."),
+          !loading && trees.length === 0 && React.createElement("p", null, "No trees yet. Create one above!"),
+          trees.map(tree => 
+            React.createElement("div", {
+              key: tree.id,
+              className: "tree-item"
+            },
+              React.createElement("span", null, "🌳"),
+              React.createElement("strong", null, tree.tree_name)
+            )
+          )
+        ),
+
+        error && React.createElement("div", { className: "error" }, error),
+        success && React.createElement("div", { className: "success" }, success)
+      );
+    }
+
+    // Render the app
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(React.createElement(App));
+
+    console.log("✅ AfricanLineage app initialized");
+  </script>
+</body>
+</html>
