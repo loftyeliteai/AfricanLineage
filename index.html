@@ -343,10 +343,10 @@ const { useState, useEffect, useRef, useCallback, useMemo } = React;
 //  Dashboard → Settings → API
 // ══════════════════════════════════════════════════════
 const APP_CONFIG = {
-  supabaseUrl: "https://iwkyswqllkijjnyovrnt.supabase.co",
-  supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3a3lzd3FsbGtpampueW92cm50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDQ0MDYsImV4cCI6MjA4OTg4MDQwNn0.SqLpdE0ntxDEbcuBW9q-3Zjz_4D6CBWLP97Csrj9W_4",
+  supabaseUrl: "YOUR_SUPABASE_URL",
+  supabaseAnonKey: "YOUR_SUPABASE_ANON_KEY",
   supabaseStorageBucket: "family-media",
-  siteUrl: "https://africanlineage.com",
+  siteUrl: "https://your-site.netlify.app",
   ...window.AFRICAN_LINEAGE_CONFIG,
 };
 
@@ -1306,7 +1306,8 @@ const TreeConnectionsPanel = ({person, persons, onSelect, onEdit}) => {
 
 // ══════════════════════════════════════════════════════
 //  PERSON DETAIL MODAL
-// ══════════════════════════════════════════════════════const PersonDetail = ({p, persons, onEdit, onDelete, onClose}) => {
+// ══════════════════════════════════════════════════════
+const PersonDetail = ({p, persons, onEdit, onDelete, onClose}) => {
   const father  = persons.find(x=>x.id===p.father_id);
   const mother  = persons.find(x=>x.id===p.mother_id);
   const spouse  = persons.find(x=>x.id===p.spouse_id);
@@ -2487,7 +2488,6 @@ const App = () => {
 
   return (
     <div className="app">
-      <ModeNotice/>
       <Nav
         user={user} page={page}
         onLogin={()=>setModal('login')}
@@ -2554,6 +2554,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
+
+
 
 
 
