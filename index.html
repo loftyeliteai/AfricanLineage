@@ -1,0 +1,2351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AfricanLineage.com – Discover Your Roots</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* ═══════════════════════════════════════════════════
+   AFRICANLINEAGE.COM  —  DESIGN SYSTEM
+   "Clean and Green" · Quicksand + Source Sans 3
+═══════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g900:#0f2e14;--g800:#1a4420;--g700:#215829;--g600:#2d7a38;--g500:#3a9146;
+  --g400:#5ab068;--g300:#8ecf98;--g200:#c2e8c9;--g100:#e4f5e7;--g50:#f3fbf4;
+  --sand:#faf7f2;--sand2:#f0ebe0;--white:#fff;
+  --td:#1a2e1c;--tm:#3d5c42;--tl:#6b8e72;
+  --r-sm:8px;--r-md:14px;--r-lg:22px;
+  --sh-sm:0 1px 4px rgba(0,0,0,.07);
+  --sh-md:0 4px 18px rgba(0,0,0,.1);
+  --sh-lg:0 12px 44px rgba(0,0,0,.14);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Source Sans 3',sans-serif;background:var(--sand);color:var(--td);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Quicksand',sans-serif;font-weight:700}
+button{cursor:pointer;font-family:'Source Sans 3',sans-serif;transition:all .18s}
+input,select,textarea{font-family:'Source Sans 3',sans-serif}
+a{text-decoration:none;color:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--g50)}
+::-webkit-scrollbar-thumb{background:var(--g200);border-radius:3px}
+
+/* ── LAYOUT ── */
+.app{display:flex;flex-direction:column;min-height:100vh}
+
+/* ── NAV ── */
+.nav{background:rgba(250,247,242,.96);backdrop-filter:blur(14px);border-bottom:1px solid rgba(42,122,56,.1);padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;gap:1rem}
+.nav-logo{display:flex;align-items:center;gap:9px;cursor:pointer;flex-shrink:0}
+.logo-text{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1.05rem;color:var(--g800)}
+.logo-text span{color:var(--g500)}
+.nav-links{display:flex;gap:.25rem;align-items:center;flex:1;justify-content:center}
+.nav-r{display:flex;gap:.6rem;align-items:center;flex-shrink:0}
+
+/* ── BUTTONS ── */
+.btn{border:none;border-radius:100px;padding:.48rem 1.05rem;font-size:.875rem;font-weight:600;display:inline-flex;align-items:center;gap:.35rem;white-space:nowrap}
+.btn-sm{padding:.33rem .8rem;font-size:.8rem}
+.btn-lg{padding:.72rem 1.7rem;font-size:.95rem}
+.btn-primary{background:var(--g600);color:#fff;box-shadow:0 2px 8px rgba(42,122,56,.22)}
+.btn-primary:hover{background:var(--g700);transform:translateY(-1px);box-shadow:0 5px 16px rgba(42,122,56,.3)}
+.btn-secondary{background:var(--white);color:var(--g700);border:1.5px solid var(--g200)}
+.btn-secondary:hover{background:var(--g50);border-color:var(--g300)}
+.btn-ghost{background:transparent;color:var(--tm);border:none;padding:.4rem .7rem;border-radius:var(--r-sm)}
+.btn-ghost:hover{background:var(--g50);color:var(--g700)}
+.btn-nav{background:transparent;color:var(--tm);border:none;border-radius:var(--r-sm);padding:.4rem .75rem;font-size:.85rem;font-weight:500}
+.btn-nav:hover{background:var(--g50);color:var(--g700)}
+.btn-nav.active{background:var(--g100);color:var(--g700);font-weight:600}
+.btn-danger{background:#dc2626;color:#fff}
+.btn-danger:hover{background:#b91c1c}
+.btn-outline{background:transparent;color:var(--g700);border:1.5px solid var(--g300)}
+.btn-outline:hover{background:var(--g100)}
+.btn-white{background:#fff;color:var(--g800);box-shadow:0 2px 10px rgba(0,0,0,.14)}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.btn-dark-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+.btn-dark-outline:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.6)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(155deg,var(--g50) 0%,var(--sand) 50%,var(--sand2) 100%);padding:5rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+.hero-dots{position:absolute;inset:0;opacity:.04;background-image:radial-gradient(circle,var(--g600) 1.5px,transparent 1.5px);background-size:38px 38px;pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--g100);color:var(--g700);border:1px solid var(--g200);border-radius:100px;padding:.28rem .9rem;font-size:.77rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1.25rem;animation:fadeUp .5s ease both}
+.hero h1{font-size:clamp(2rem,5vw,3.3rem);color:var(--g900);line-height:1.17;letter-spacing:-.026em;max-width:700px;margin:0 auto 1rem;animation:fadeUp .5s .1s ease both}
+.hero h1 em{font-style:normal;color:var(--g500);position:relative}
+.hero h1 em::after{content:'';position:absolute;bottom:2px;left:0;right:0;height:3px;background:var(--g200);border-radius:2px}
+.hero-sub{font-size:1.05rem;color:var(--tm);max-width:500px;margin:0 auto 2.25rem;line-height:1.72;animation:fadeUp .5s .2s ease both}
+.hero-actions{display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap;animation:fadeUp .5s .3s ease both}
+.search-hero-wrap{max-width:580px;margin:2.25rem auto 0;animation:fadeUp .5s .4s ease both}
+.search-hero{display:flex;align-items:center;background:var(--white);border:1.5px solid var(--g200);border-radius:100px;padding:.3rem .3rem .3rem 1.1rem;gap:.5rem;box-shadow:0 4px 22px rgba(0,0,0,.06);transition:border-color .2s,box-shadow .2s}
+.search-hero:focus-within{border-color:var(--g400);box-shadow:0 4px 24px rgba(42,122,56,.14)}
+.search-hero input{flex:1;border:none;outline:none;font-size:.9rem;color:var(--td);background:transparent;padding:.45rem 0}
+.search-hero input::placeholder{color:var(--tl)}
+
+/* ── STATS STRIP ── */
+.stats{background:var(--g800);padding:1.75rem 2rem;display:flex;justify-content:center;gap:3.5rem;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-n{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1.85rem;color:var(--g300);display:block;line-height:1;margin-bottom:.2rem}
+.stat-l{font-size:.8rem;color:rgba(255,255,255,.6)}
+
+/* ── SECTIONS ── */
+.section{padding:4.5rem 2rem}
+.section-label{text-align:center;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g500);margin-bottom:.6rem}
+.section-title{font-size:clamp(1.5rem,3vw,2.1rem);color:var(--g900);text-align:center;letter-spacing:-.02em;margin-bottom:.65rem}
+.section-sub{font-size:.93rem;color:var(--tm);text-align:center;max-width:460px;margin:0 auto 3rem;line-height:1.72}
+.bg-light{background:var(--g50)}
+.bg-dark{background:var(--g800)}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid rgba(42,122,56,.09);border-radius:var(--r-lg);padding:1.5rem;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+.card-grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;max-width:900px;margin:0 auto}
+.card-grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;max-width:860px;margin:0 auto}
+.card-icon{width:46px;height:46px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:.875rem;flex-shrink:0}
+.card h3{font-size:.97rem;color:var(--g900);margin-bottom:.4rem}
+.card p{font-size:.86rem;color:var(--tm);line-height:1.65}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;background:rgba(15,46,20,.42);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .2s ease}
+.modal{background:var(--white);border-radius:var(--r-lg);padding:2rem;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;position:relative;animation:slideUp .25s ease;box-shadow:var(--sh-lg)}
+.modal-lg{max-width:700px}
+.modal-xl{max-width:1000px;max-height:96vh}
+.modal-close{position:absolute;top:.875rem;right:.875rem;background:var(--g50);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--tm);font-size:.95rem;transition:background .15s}
+.modal-close:hover{background:var(--g100)}
+.modal h2{font-size:1.35rem;color:var(--g900);margin-bottom:.3rem}
+.modal-sub{font-size:.85rem;color:var(--tl);margin-bottom:1.5rem}
+
+/* ── FORMS ── */
+.form-group{margin-bottom:.95rem}
+.form-label{display:block;font-size:.8rem;font-weight:600;color:var(--tm);margin-bottom:.38rem;letter-spacing:.01em}
+.form-input{width:100%;border:1.5px solid var(--g200);border-radius:var(--r-sm);padding:.58rem .875rem;font-size:.9rem;color:var(--td);background:var(--white);outline:none;transition:border-color .2s,box-shadow .2s}
+.form-input:focus{border-color:var(--g400);box-shadow:0 0 0 3px rgba(42,122,56,.1)}
+.form-input::placeholder{color:var(--tl)}
+.form-input:disabled{opacity:.6;background:var(--g50)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.875rem}
+.form-err{background:#fff5f5;border:1px solid #fecaca;border-radius:var(--r-sm);padding:.55rem .875rem;font-size:.82rem;color:#dc2626;margin-bottom:.875rem}
+.form-ok{background:var(--g50);border:1px solid var(--g200);border-radius:var(--r-sm);padding:.55rem .875rem;font-size:.82rem;color:var(--g700);margin-bottom:.875rem}
+.form-divider{display:flex;align-items:center;gap:.75rem;margin:1.1rem 0;color:var(--tl);font-size:.78rem}
+.form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:var(--g100)}
+select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b8e72' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center}
+
+/* ── DASHBOARD ── */
+.dash{display:flex;min-height:calc(100vh - 58px)}
+.sidebar{width:230px;background:var(--white);border-right:1px solid var(--g100);padding:1.25rem 0;flex-shrink:0;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto;display:flex;flex-direction:column}
+.sb-section{padding:0 .875rem;margin-bottom:1.25rem}
+.sb-label{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tl);margin-bottom:.4rem;padding:0 .5rem}
+.sb-item{display:flex;align-items:center;gap:.6rem;padding:.5rem .75rem;border-radius:var(--r-sm);font-size:.86rem;color:var(--tm);cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:background .14s,color .14s}
+.sb-item:hover{background:var(--g50);color:var(--g700)}
+.sb-item.active{background:var(--g100);color:var(--g700);font-weight:600}
+.sb-icon{font-size:.95rem;width:20px;text-align:center;flex-shrink:0}
+.dash-main{flex:1;padding:1.75rem;overflow-y:auto;background:var(--sand);min-width:0}
+.dash-head{margin-bottom:1.75rem}
+.dash-head h1{font-size:1.55rem;color:var(--g900);margin-bottom:.2rem}
+.dash-head p{color:var(--tl);font-size:.875rem}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;margin-bottom:1.75rem}
+.ds-card{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-md);padding:1.2rem 1.4rem;cursor:pointer;transition:box-shadow .2s,transform .2s}
+.ds-card:hover{box-shadow:var(--sh-sm);transform:translateY(-2px)}
+.ds-n{font-family:'Quicksand',sans-serif;font-weight:700;font-size:2rem;color:var(--g600);display:block;line-height:1;margin-bottom:.2rem}
+.ds-l{font-size:.78rem;color:var(--tl)}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:.2rem;border-bottom:2px solid var(--g100);margin-bottom:1.4rem;overflow-x:auto}
+.tab{padding:.55rem 1rem;font-size:.85rem;font-weight:600;color:var(--tl);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .18s,border-color .18s}
+.tab.active{color:var(--g600);border-bottom-color:var(--g600)}
+.tab:hover:not(.active){color:var(--tm)}
+
+/* ── PERSON LIST & CARDS ── */
+.person-list{display:grid;gap:.875rem}
+.p-card{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-md);padding:1.1rem 1.25rem;display:flex;align-items:center;gap:.875rem;transition:box-shadow .18s}
+.p-card:hover{box-shadow:var(--sh-sm)}
+.p-info{flex:1;min-width:0}
+.p-name{font-family:'Quicksand',sans-serif;font-weight:700;font-size:.975rem;color:var(--g900)}
+.p-meta{font-size:.78rem;color:var(--tl);margin-top:.18rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-actions{display:flex;gap:.4rem;flex-shrink:0}
+
+/* ── AVATAR ── */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Quicksand',sans-serif;font-weight:700;flex-shrink:0;background:var(--g100);border:2px solid var(--g200);color:var(--g600);overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+
+/* ── PHOTO GRID ── */
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.875rem}
+.ph-item{border-radius:var(--r-md);overflow:hidden;aspect-ratio:1;background:var(--g50);border:1px solid var(--g100);cursor:pointer;transition:transform .18s,box-shadow .18s;position:relative}
+.ph-item:hover{transform:scale(1.04);box-shadow:var(--sh-md)}
+.ph-item img{width:100%;height:100%;object-fit:cover;display:block}
+.ph-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.68));color:#fff;font-size:.72rem;font-weight:600;padding:.4rem .5rem}
+.ph-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:.68rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.upload-zone{border:2px dashed var(--g200);border-radius:var(--r-lg);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--g50)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--g400);background:var(--g100)}
+.upload-icon{font-size:2.5rem;margin-bottom:.65rem;color:var(--g300)}
+
+/* ── SEARCH ── */
+.search-bar{display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.search-bar input{flex:1;min-width:180px}
+.filters{display:flex;gap:.6rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.filter-chip{padding:.3rem .85rem;border:1.5px solid var(--g200);border-radius:100px;font-size:.78rem;color:var(--tm);background:var(--white);cursor:pointer;transition:all .17s}
+.filter-chip.active,.filter-chip:hover{background:var(--g100);border-color:var(--g400);color:var(--g700)}
+.s-result{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-md);padding:1.1rem 1.25rem;margin-bottom:.7rem;cursor:pointer;transition:box-shadow .18s,border-color .18s}
+.s-result:hover{box-shadow:var(--sh-sm);border-color:var(--g200)}
+.r-name{font-family:'Quicksand',sans-serif;font-weight:700;font-size:.97rem;color:var(--g700);margin-bottom:.2rem}
+.r-meta{font-size:.78rem;color:var(--tl)}
+.r-tags{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.4rem}
+.tag{background:var(--g50);color:var(--g700);border:1px solid var(--g100);border-radius:100px;padding:.12rem .55rem;font-size:.7rem;font-weight:600}
+
+/* ── HINTS ── */
+.hint-card{background:var(--white);border:1.5px solid var(--g100);border-radius:var(--r-lg);padding:1.4rem;margin-bottom:.875rem;transition:border-color .2s}
+.hint-card.accepted{border-color:var(--g300)}
+.conf-bar{height:5px;background:var(--g100);border-radius:3px;overflow:hidden;width:56px;margin-top:.3rem}
+.conf-fill{height:100%;background:var(--g400);border-radius:3px}
+
+/* ── TIMELINE ── */
+.timeline{position:relative;padding-left:1.875rem}
+.timeline::before{content:'';position:absolute;left:.55rem;top:0;bottom:0;width:2px;background:var(--g100)}
+.tl-item{position:relative;margin-bottom:1.25rem;cursor:pointer}
+.tl-dot{position:absolute;left:-1.5rem;top:.28rem;width:11px;height:11px;border-radius:50%;background:var(--g400);border:2px solid var(--white);box-shadow:0 0 0 2px var(--g200)}
+.tl-date{font-size:.72rem;color:var(--tl);font-weight:600;margin-bottom:.18rem}
+.tl-body{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-sm);padding:.75rem .875rem;font-size:.86rem;color:var(--tm)}
+
+/* ── TREE SVG ── */
+.tree-wrap{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-lg);overflow:hidden}
+.tree-toolbar{display:flex;align-items:center;gap:.6rem;padding:.875rem 1rem;border-bottom:1px solid var(--g50);flex-wrap:wrap}
+.tree-toolbar span{font-size:.8rem;color:var(--tl);margin-left:auto}
+.tree-scroll{overflow:auto;padding:1.5rem;min-height:420px;cursor:grab}
+.tree-scroll:active{cursor:grabbing}
+.tree-node-g{cursor:pointer}
+.tree-node-g:hover rect{filter:brightness(.97)}
+
+/* ── PROGRESS ── */
+.prog{height:5px;background:var(--g100);border-radius:3px;overflow:hidden;margin-top:.4rem}
+.prog-fill{height:100%;background:var(--g400);border-radius:3px;transition:width .4s ease}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:.18rem .55rem;border-radius:100px;font-size:.7rem;font-weight:700}
+.badge-green{background:var(--g100);color:var(--g700)}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-amber{background:#fef3c7;color:#92400e}
+.badge-red{background:#fee2e2;color:#991b1b}
+.chip{display:inline-flex;align-items:center;gap:.25rem;padding:.2rem .65rem;background:var(--g50);border:1px solid var(--g100);border-radius:100px;font-size:.76rem;color:var(--tm)}
+
+/* ── MISC ── */
+.divider{height:1px;background:var(--g100);margin:1.1rem 0}
+.empty{text-align:center;padding:2.5rem 1.5rem;color:var(--tl)}
+.empty .ei{font-size:2.75rem;margin-bottom:.65rem}
+.notif{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-md);padding:.875rem 1.1rem;margin-bottom:.65rem;display:flex;gap:.7rem;align-items:flex-start}
+.notif-dot{width:7px;height:7px;border-radius:50%;background:var(--g400);flex-shrink:0;margin-top:.3rem}
+.flex{display:flex}.items-c{align-items:center}.gap-1{gap:.4rem}.gap-2{gap:.7rem}.gap-3{gap:1rem}.jb{justify-content:space-between}.jc{justify-content:center}.wrap{flex-wrap:wrap}
+.w-full{width:100%}.mt-1{margin-top:.4rem}.mt-2{margin-top:.7rem}.mt-3{margin-top:1rem}.mt-4{margin-top:1.5rem}.mb-2{margin-bottom:.7rem}.mb-3{margin-bottom:1rem}.text-c{text-align:center}
+.spin-wrap{display:flex;justify-content:center;padding:2rem}
+.spin{display:inline-block;width:28px;height:28px;border:3px solid var(--g100);border-top-color:var(--g400);border-radius:50%;animation:spin .75s linear infinite}
+.loading-dots::after{content:'...';animation:dots 1.2s steps(4,end) infinite}
+@keyframes dots{0%,100%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+
+/* ── SETUP SCREEN ── */
+.setup{max-width:580px;margin:4rem auto;padding:2rem;background:var(--white);border-radius:var(--r-lg);box-shadow:var(--sh-lg);border:1px solid var(--g100)}
+.setup-step{background:var(--g50);border:1px solid var(--g100);border-radius:var(--r-md);padding:1rem 1.25rem;margin-bottom:.75rem}
+.setup-step code{background:var(--white);border:1px solid var(--g200);border-radius:4px;padding:.1rem .4rem;font-size:.82rem;color:var(--g700);font-family:monospace}
+
+/* ── MARKETING ── */
+.mk-wrap{background:linear-gradient(180deg,var(--sand) 0%,#fff 55%,var(--g50) 100%)}
+.mk-shell{max-width:1100px;margin:0 auto;padding:0 2rem 4rem}
+.mk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
+.mk-panel{background:rgba(255,255,255,.86);border:1px solid rgba(42,122,56,.12);border-radius:var(--r-lg);padding:1.2rem 1.25rem;box-shadow:var(--sh-sm)}
+.mk-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.9rem;margin:2rem 0}
+.mk-stat{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-md);padding:1rem 1.1rem}
+.mk-stat strong{display:block;font-family:'Quicksand',sans-serif;font-size:1.5rem;color:var(--g700);margin-bottom:.2rem}
+.mk-eyebrow{display:inline-flex;align-items:center;gap:.45rem;background:var(--g100);color:var(--g700);border:1px solid var(--g200);border-radius:100px;padding:.32rem .8rem;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.mk-hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:1.6rem;align-items:center}
+.mk-list{display:grid;gap:.85rem}
+.mk-list-item{display:flex;gap:.8rem;align-items:flex-start;background:var(--white);border:1px solid var(--g100);border-radius:var(--r-md);padding:1rem 1.05rem}
+.mk-list-item b{display:block;color:var(--g900);margin-bottom:.15rem}
+.mk-list-item p{font-size:.84rem;color:var(--tm);line-height:1.65}
+.mk-quote{background:linear-gradient(135deg,var(--g800),var(--g700));border-radius:var(--r-lg);padding:1.4rem;color:#fff}
+.mk-quote p{font-size:.95rem;line-height:1.7;color:rgba(255,255,255,.88)}
+.mk-quote small{display:block;margin-top:.8rem;color:var(--g200)}
+.mk-price{position:relative;background:var(--white);border:1px solid var(--g100);border-radius:var(--r-lg);padding:1.35rem}
+.mk-price.featured{border-color:var(--g400);box-shadow:0 16px 34px rgba(42,122,56,.12)}
+.mk-price-tag{position:absolute;top:1rem;right:1rem;background:var(--g100);color:var(--g700);padding:.2rem .55rem;border-radius:100px;font-size:.68rem;font-weight:700}
+.mk-price-amount{font-family:'Quicksand',sans-serif;font-size:2rem;color:var(--g900);margin:.6rem 0}
+.mk-price ul{list-style:none;display:grid;gap:.55rem;margin:1rem 0 1.2rem}
+.mk-price li{font-size:.85rem;color:var(--tm)}
+.mk-article{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-lg);overflow:hidden}
+.mk-article-body{padding:1.1rem 1.2rem}
+.mk-article-meta{font-size:.74rem;color:var(--tl);letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:.45rem}
+.mk-article h3{font-size:1rem;color:var(--g900);margin-bottom:.45rem}
+.mk-article p{font-size:.86rem;color:var(--tm);line-height:1.7}
+.mk-banner{background:linear-gradient(120deg,#11391a 0%,#1d5a2a 60%,#2d7a38 100%);border-radius:28px;padding:2rem;color:#fff;box-shadow:var(--sh-lg)}
+.mk-banner p{color:rgba(255,255,255,.78);max-width:640px;line-height:1.75}
+.mk-faq{background:var(--white);border:1px solid var(--g100);border-radius:var(--r-md);padding:1rem 1.1rem}
+.mk-faq h4{font-size:.95rem;color:var(--g900);margin-bottom:.35rem}
+.mk-faq p{font-size:.84rem;color:var(--tm);line-height:1.68}
+.mk-linkbtn{border:none;background:none;color:inherit;text-align:left;padding:0;cursor:pointer}
+
+/* ── FOOTER ── */
+footer{background:var(--g900);color:rgba(255,255,255,.45);padding:2.25rem 2rem 1.5rem}
+.footer-in{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:2rem;margin-bottom:1.75rem}
+.fc h4{font-family:'Quicksand',sans-serif;font-weight:700;font-size:.78rem;color:rgba(255,255,255,.7);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.65rem}
+.fc ul{list-style:none}
+.fc li{margin-bottom:.35rem}
+.fc a{font-size:.82rem;color:rgba(255,255,255,.4);transition:color .2s}
+.fc a:hover{color:var(--g300)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:1.1rem;text-align:center;font-size:.76rem;max-width:900px;margin:0 auto}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ── PRINT ── */
+@media print{
+  .nav,.sidebar,.tree-toolbar .btn,.overlay,.no-print{display:none!important}
+  .dash{display:block}
+  .dash-main{padding:0}
+  body,.tree-wrap{background:white;box-shadow:none}
+}
+@media(max-width:640px){
+  .nav-links{display:none}
+  .sidebar{display:none}
+  .footer-in{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
+  .mk-hero-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="./config.js"></script>
+<script>
+window.AFRICAN_LINEAGE_CONFIG = window.AFRICAN_LINEAGE_CONFIG || {};
+</script>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+// ══════════════════════════════════════════════════════
+//  SUPABASE CONFIG  — replace with your own keys
+//  Dashboard → Settings → API
+// ══════════════════════════════════════════════════════
+const APP_CONFIG = {
+  supabaseUrl: "YOUR_SUPABASE_URL",
+  supabaseAnonKey: "YOUR_SUPABASE_ANON_KEY",
+  supabaseStorageBucket: "family-media",
+  siteUrl: "https://your-site.netlify.app",
+  ...window.AFRICAN_LINEAGE_CONFIG,
+};
+
+const SUPABASE_URL  = APP_CONFIG.supabaseUrl;
+const SUPABASE_ANON = APP_CONFIG.supabaseAnonKey;
+const SUPABASE_BUCKET = APP_CONFIG.supabaseStorageBucket || 'family-media';
+const SITE_URL = APP_CONFIG.siteUrl || window.location.origin;
+
+// ─── SQL SCHEMA (run once in Supabase SQL Editor) ────────────────────────────
+/*
+create table profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  full_name text,
+  region text,
+  ancestor_name text,
+  avatar_url text,
+  created_at timestamptz default now()
+);
+
+create table family_trees (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade,
+  tree_name text not null,
+  description text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table persons (
+  id uuid primary key default gen_random_uuid(),
+  tree_id uuid references family_trees(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete cascade,
+  first_name text,
+  last_name text,
+  gender text default 'male',
+  birth_year integer,
+  birth_place text,
+  death_year integer,
+  death_place text,
+  occupation text,
+  nationality text,
+  religion text,
+  notes text,
+  photo_url text,
+  father_id uuid,
+  mother_id uuid,
+  spouse_id uuid,
+  created_at timestamptz default now()
+);
+
+create table photos (
+  id uuid primary key default gen_random_uuid(),
+  tree_id uuid references family_trees(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete cascade,
+  name text,
+  url text,
+  storage_path text,
+  year integer,
+  created_at timestamptz default now()
+);
+
+create table ged_files (
+  id uuid primary key default gen_random_uuid(),
+  tree_id uuid references family_trees(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete cascade,
+  file_name text,
+  file_size bigint,
+  created_at timestamptz default now()
+);
+
+-- Row Level Security
+alter table profiles enable row level security;
+alter table family_trees enable row level security;
+alter table persons enable row level security;
+alter table photos enable row level security;
+alter table ged_files enable row level security;
+
+create policy "Users manage own profile" on profiles for all using (auth.uid()=id);
+create policy "Users manage own trees" on family_trees for all using (auth.uid()=user_id);
+create policy "Users manage own persons" on persons for all using (auth.uid()=user_id);
+create policy "Users manage own photos" on photos for all using (auth.uid()=user_id);
+create policy "Users manage own ged" on ged_files for all using (auth.uid()=user_id);
+
+-- Storage bucket for uploaded family photos
+insert into storage.buckets (id, name, public)
+values ('family-media', 'family-media', true)
+on conflict (id) do nothing;
+
+create policy "Public family media is viewable"
+on storage.objects for select
+using (bucket_id = 'family-media');
+
+create policy "Users upload own family media"
+on storage.objects for insert
+with check (
+  bucket_id = 'family-media'
+  and auth.uid()::text = (storage.foldername(name))[1]
+);
+
+create policy "Users update own family media"
+on storage.objects for update
+using (
+  bucket_id = 'family-media'
+  and auth.uid()::text = (storage.foldername(name))[1]
+);
+
+create policy "Users delete own family media"
+on storage.objects for delete
+using (
+  bucket_id = 'family-media'
+  and auth.uid()::text = (storage.foldername(name))[1]
+);
+*/
+
+// ─── INIT SUPABASE ────────────────────────────────────────────────────────────
+const isConfigured = SUPABASE_URL && !SUPABASE_URL.includes('YOUR_') &&
+                     SUPABASE_ANON && !SUPABASE_ANON.includes('YOUR_');
+const sb = isConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+const USING_LOCAL_MODE = !sb;
+const LOCAL_DB_KEY = 'african-lineage-local-db-v1';
+
+const defaultLocalDb = () => ({
+  users: [],
+  profiles: [],
+  family_trees: [],
+  persons: [],
+  photos: [],
+  ged_files: [],
+  sessionUserId: null,
+});
+
+const readLocalDb = () => {
+  try {
+    const raw = localStorage.getItem(LOCAL_DB_KEY);
+    if (!raw) return defaultLocalDb();
+    const parsed = JSON.parse(raw);
+    return {...defaultLocalDb(), ...parsed};
+  } catch (_err) {
+    return defaultLocalDb();
+  }
+};
+
+const writeLocalDb = (db) => {
+  localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
+  return db;
+};
+
+const clone = (value) => JSON.parse(JSON.stringify(value));
+const wait = (ms = 0) => new Promise(resolve => setTimeout(resolve, ms));
+const readFileAsDataUrl = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(reader.result);
+  reader.onerror = () => reject(reader.error || new Error('Failed to read file.'));
+  reader.readAsDataURL(file);
+});
+const slugify = (value='') => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'item';
+const getStoragePath = ({userId, treeId, fileName}) => `${userId}/${treeId}/${Date.now()}-${slugify(fileName)}`;
+
+const localApi = {
+  async getSession() {
+    const db = readLocalDb();
+    const user = db.users.find(u => u.id === db.sessionUserId) || null;
+    return {user: user ? clone(user) : null};
+  },
+  onAuthStateChange() {
+    return () => {};
+  },
+  async signUp({email, password, name, region, ancestor}) {
+    await wait(150);
+    const db = readLocalDb();
+    const existing = db.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (existing) return {user: null, session: null, error: {message: 'An account with this email already exists.'}};
+    const user = {
+      id: uid(),
+      email,
+      password,
+      created_at: new Date().toISOString(),
+      user_metadata: {full_name: name || ''},
+    };
+    db.users.push(user);
+    db.profiles.push({
+      id: user.id,
+      full_name: name || '',
+      region: region || '',
+      ancestor_name: ancestor || '',
+      avatar_url: '',
+      created_at: new Date().toISOString(),
+    });
+    db.sessionUserId = user.id;
+    writeLocalDb(db);
+    return {user: clone(user), session: {user: clone(user)}, error: null};
+  },
+  async signIn({email, password}) {
+    await wait(120);
+    const db = readLocalDb();
+    const user = db.users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+    if (!user) return {user: null, error: {message: 'Invalid email or password.'}};
+    db.sessionUserId = user.id;
+    writeLocalDb(db);
+    return {user: clone(user), error: null};
+  },
+  async signOut() {
+    const db = readLocalDb();
+    db.sessionUserId = null;
+    writeLocalDb(db);
+    return {error: null};
+  },
+  async updatePassword({userId, password}) {
+    const db = readLocalDb();
+    const user = db.users.find(u => u.id === userId);
+    if (!user) return {error: {message: 'User not found.'}};
+    user.password = password;
+    writeLocalDb(db);
+    return {error: null};
+  },
+  async getProfile(userId) {
+    const db = readLocalDb();
+    return clone(db.profiles.find(p => p.id === userId) || null);
+  },
+  async saveProfile(profile) {
+    const db = readLocalDb();
+    const idx = db.profiles.findIndex(p => p.id === profile.id);
+    const next = {...(idx >= 0 ? db.profiles[idx] : {created_at: new Date().toISOString()}), ...profile};
+    if (idx >= 0) db.profiles[idx] = next;
+    else db.profiles.push(next);
+    const user = db.users.find(u => u.id === profile.id);
+    if (user && profile.full_name !== undefined) {
+      user.user_metadata = {...user.user_metadata, full_name: profile.full_name};
+    }
+    writeLocalDb(db);
+    return clone(next);
+  },
+  async getTrees(userId) {
+    const db = readLocalDb();
+    return clone(db.family_trees.filter(t => t.user_id === userId).sort((a, b) => new Date(a.created_at) - new Date(b.created_at)));
+  },
+  async createTree({userId, tree_name}) {
+    const db = readLocalDb();
+    const now = new Date().toISOString();
+    const tree = {id: uid(), user_id: userId, tree_name, description: '', created_at: now, updated_at: now};
+    db.family_trees.push(tree);
+    writeLocalDb(db);
+    return clone(tree);
+  },
+  async deleteTree(treeId) {
+    const db = readLocalDb();
+    db.family_trees = db.family_trees.filter(t => t.id !== treeId);
+    db.persons = db.persons.filter(p => p.tree_id !== treeId);
+    db.photos = db.photos.filter(p => p.tree_id !== treeId);
+    db.ged_files = db.ged_files.filter(f => f.tree_id !== treeId);
+    writeLocalDb(db);
+  },
+  async getPersons(treeId) {
+    const db = readLocalDb();
+    return clone(db.persons.filter(p => p.tree_id === treeId).sort((a, b) => (a.birth_year || 0) - (b.birth_year || 0)));
+  },
+  async savePerson(payload) {
+    const db = readLocalDb();
+    const now = new Date().toISOString();
+    if (payload.id) {
+      const idx = db.persons.findIndex(p => p.id === payload.id);
+      if (idx >= 0) db.persons[idx] = {...db.persons[idx], ...payload, updated_at: now};
+      else db.persons.push({...payload, created_at: now, updated_at: now});
+    } else {
+      db.persons.push({...payload, id: uid(), created_at: now, updated_at: now});
+    }
+    writeLocalDb(db);
+  },
+  async deletePerson(personId) {
+    const db = readLocalDb();
+    db.persons = db.persons
+      .filter(p => p.id !== personId)
+      .map(p => ({
+        ...p,
+        father_id: p.father_id === personId ? null : p.father_id,
+        mother_id: p.mother_id === personId ? null : p.mother_id,
+        spouse_id: p.spouse_id === personId ? null : p.spouse_id,
+      }));
+    writeLocalDb(db);
+  },
+  async getPhotos(treeId) {
+    const db = readLocalDb();
+    return clone(db.photos.filter(p => p.tree_id === treeId).sort((a, b) => new Date(a.created_at) - new Date(b.created_at)));
+  },
+  async addPhoto(photo) {
+    const db = readLocalDb();
+    let url = photo.url || '';
+    if (!url && photo.file) {
+      url = await readFileAsDataUrl(photo.file);
+    }
+    db.photos.push({id: uid(), year: null, created_at: new Date().toISOString(), ...photo, url, file: undefined});
+    writeLocalDb(db);
+  },
+  async deletePhoto(photoId) {
+    const db = readLocalDb();
+    db.photos = db.photos.filter(p => p.id !== photoId);
+    writeLocalDb(db);
+  },
+  async getGedFiles(treeId) {
+    const db = readLocalDb();
+    return clone(db.ged_files.filter(f => f.tree_id === treeId).sort((a, b) => new Date(a.created_at) - new Date(b.created_at)));
+  },
+  async addGedFile(file) {
+    const db = readLocalDb();
+    db.ged_files.push({id: uid(), created_at: new Date().toISOString(), ...file});
+    writeLocalDb(db);
+  },
+  async getPersonsForTrees(treeIds) {
+    const db = readLocalDb();
+    return clone(db.persons.filter(p => treeIds.includes(p.tree_id)));
+  },
+  async getPhotosForTrees(treeIds) {
+    const db = readLocalDb();
+    return clone(db.photos.filter(p => treeIds.includes(p.tree_id)));
+  },
+  async deleteAccount(userId) {
+    const db = readLocalDb();
+    const treeIds = db.family_trees.filter(t => t.user_id === userId).map(t => t.id);
+    db.users = db.users.filter(u => u.id !== userId);
+    db.profiles = db.profiles.filter(p => p.id !== userId);
+    db.family_trees = db.family_trees.filter(t => t.user_id !== userId);
+    db.persons = db.persons.filter(p => !treeIds.includes(p.tree_id) && p.user_id !== userId);
+    db.photos = db.photos.filter(p => !treeIds.includes(p.tree_id) && p.user_id !== userId);
+    db.ged_files = db.ged_files.filter(f => !treeIds.includes(f.tree_id) && f.user_id !== userId);
+    if (db.sessionUserId === userId) db.sessionUserId = null;
+    writeLocalDb(db);
+  },
+};
+
+const supabaseApi = {
+  async getSession() {
+    const {data: {session}} = await sb.auth.getSession();
+    return {user: session?.user || null};
+  },
+  onAuthStateChange(callback) {
+    const {data: {subscription}} = sb.auth.onAuthStateChange((_event, session) => callback(session?.user || null));
+    return () => subscription.unsubscribe();
+  },
+  async signUp({email, password, name, region, ancestor}) {
+    const {data, error} = await sb.auth.signUp({email, password, options: {data: {full_name: name}}});
+    if (error) return {user: null, session: null, error};
+    if (data.user) {
+      await sb.from('profiles').upsert({id: data.user.id, full_name: name, region, ancestor_name: ancestor});
+    }
+    return {user: data.user || null, session: data.session || null, error: null};
+  },
+  async signIn({email, password}) {
+    const {data, error} = await sb.auth.signInWithPassword({email, password});
+    return {user: data?.user || null, error};
+  },
+  async signOut() {
+    return sb.auth.signOut();
+  },
+  async updatePassword({password}) {
+    return sb.auth.updateUser({password});
+  },
+  async getProfile(userId) {
+    const {data} = await sb.from('profiles').select('*').eq('id', userId).single();
+    return data || null;
+  },
+  async saveProfile(profile) {
+    const {data} = await sb.from('profiles').upsert(profile).select().single();
+    return data || profile;
+  },
+  async getTrees(userId) {
+    const {data} = await sb.from('family_trees').select('*').eq('user_id', userId).order('created_at');
+    return data || [];
+  },
+  async createTree({userId, tree_name}) {
+    const {data} = await sb.from('family_trees').insert([{tree_name, user_id: userId}]).select().single();
+    return data || null;
+  },
+  async deleteTree(treeId) {
+    await sb.from('persons').delete().eq('tree_id', treeId);
+    await sb.from('photos').delete().eq('tree_id', treeId);
+    await sb.from('ged_files').delete().eq('tree_id', treeId);
+    await sb.from('family_trees').delete().eq('id', treeId);
+  },
+  async getPersons(treeId) {
+    const {data} = await sb.from('persons').select('*').eq('tree_id', treeId).order('birth_year');
+    return data || [];
+  },
+  async savePerson(payload) {
+    if (payload.id) await sb.from('persons').update(payload).eq('id', payload.id);
+    else await sb.from('persons').insert([payload]);
+  },
+  async deletePerson(personId) {
+    await sb.from('persons').delete().eq('id', personId);
+  },
+  async getPhotos(treeId) {
+    const {data} = await sb.from('photos').select('*').eq('tree_id', treeId).order('created_at');
+    return data || [];
+  },
+  async addPhoto(photo) {
+    let finalUrl = photo.url || '';
+    let storagePath = photo.storage_path || null;
+    if (photo.file) {
+      storagePath = getStoragePath({userId: photo.user_id, treeId: photo.tree_id, fileName: photo.file.name});
+      const {error: uploadError} = await sb.storage.from(SUPABASE_BUCKET).upload(storagePath, photo.file, {
+        upsert: false,
+        cacheControl: '3600',
+      });
+      if (uploadError) throw uploadError;
+      const {data: publicUrlData} = sb.storage.from(SUPABASE_BUCKET).getPublicUrl(storagePath);
+      finalUrl = publicUrlData?.publicUrl || '';
+    }
+    await sb.from('photos').insert([{tree_id: photo.tree_id, user_id: photo.user_id, name: photo.name, url: finalUrl, storage_path: storagePath, year: photo.year || null}]);
+  },
+  async deletePhoto(photoId) {
+    const {data: photo} = await sb.from('photos').select('storage_path').eq('id', photoId).single();
+    if (photo?.storage_path) {
+      await sb.storage.from(SUPABASE_BUCKET).remove([photo.storage_path]);
+    }
+    await sb.from('photos').delete().eq('id', photoId);
+  },
+  async getGedFiles(treeId) {
+    const {data} = await sb.from('ged_files').select('*').eq('tree_id', treeId).order('created_at');
+    return data || [];
+  },
+  async addGedFile(file) {
+    await sb.from('ged_files').insert([file]);
+  },
+  async getPersonsForTrees(treeIds) {
+    const {data} = await sb.from('persons').select('*').in('tree_id', treeIds);
+    return data || [];
+  },
+  async getPhotosForTrees(treeIds) {
+    const {data} = await sb.from('photos').select('id').in('tree_id', treeIds);
+    return data || [];
+  },
+  async deleteAccount(userId) {
+    await sb.from('profiles').delete().eq('id', userId);
+    await sb.auth.signOut();
+  },
+};
+
+const api = sb ? supabaseApi : localApi;
+
+// ─── SAMPLE RECORDS (ancestry archive) ───────────────────────────────────────
+const RECORDS = [
+  {id:'r1',name:'Kwame Mensah',type:'Census Record',year:1950,region:'Gold Coast (Ghana)',collection:'Gold Coast Census 1948',desc:'Household record from Accra district listing Kwame Mensah, age 8.'},
+  {id:'r2',name:'Abena Asante',type:'Birth Certificate',year:1945,region:'Ashanti Region, Ghana',collection:'Ashanti Birth Registry',desc:'Birth registered at Kumasi Municipal on 14 March 1945.'},
+  {id:'r3',name:'John Osei Mensah',type:'Marriage Record',year:1938,region:'Accra, Ghana',collection:'Colonial Marriage Records',desc:'Marriage certificate from Accra magistrate court.'},
+  {id:'r4',name:'Emmanuel Kofi',type:'Military Record',year:1942,region:'Gold Coast Regiment',collection:'WWII Service Records',desc:'Service record – Gold Coast Regiment, Burma Campaign 1942-45.'},
+  {id:'r5',name:'Adwoa Mensah',type:'Burial Record',year:1928,region:'Eastern Region, Ghana',collection:'Presbyterian Church Records',desc:'Burial at Kibi Presbyterian Cemetery, 1928.'},
+  {id:'r6',name:'Efua Boateng',type:'Ship Manifest',year:1962,region:'Liverpool, UK',collection:'UK Passenger Lists',desc:'Arrived Liverpool from Accra aboard MV Aureol, 1962.'},
+  {id:'r7',name:'Samuel Mensah',type:'Land Deed',year:1955,region:'Greater Accra, Ghana',collection:'Land Title Registry',desc:'Land allocation in Labadi area, Accra, dated 1955.'},
+  {id:'r8',name:'Ama Boateng',type:'Newspaper',year:1965,region:'Accra, Ghana',collection:'Daily Graphic Archives',desc:'Named in school prize-giving report, 1965 edition.'},
+  {id:'r9',name:'Kofi Acheampong',type:'Census Record',year:1960,region:'Brong-Ahafo, Ghana',collection:'Ghana Independence Census 1960',desc:'Household listed under Sunyani district, Brong-Ahafo.'},
+  {id:'r10',name:'Grace Osei',type:'Birth Certificate',year:1952,region:'Cape Coast, Ghana',collection:'Central Region Birth Registry',desc:'Birth registered at Cape Coast hospital, June 1952.'},
+];
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const uid  = () => Math.random().toString(36).slice(2,9);
+const full = p => `${p.first_name||p.firstName||''} ${p.last_name||p.lastName||''}`.trim()||'Unknown';
+const init = p => ((p.first_name||p.firstName||'?')[0]+(p.last_name||p.lastName||'?')[0]).toUpperCase();
+const span = p => {
+  const b = p.birth_year||p.birthYear; const d = p.death_year||p.deathYear;
+  return b ? `${b} – ${d||'present'}` : '';
+};
+
+// ─── LOGO ─────────────────────────────────────────────────────────────────────
+const Logo = ({size=30}) => (
+  <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
+    <circle cx="18" cy="18" r="18" fill="#2d7a38"/>
+    <circle cx="18" cy="9"  r="3"   fill="#8ecf98"/>
+    <circle cx="11" cy="19" r="2.5" fill="#8ecf98"/>
+    <circle cx="25" cy="19" r="2.5" fill="#8ecf98"/>
+    <circle cx="8"  cy="28" r="2"   fill="#c2e8c9"/>
+    <circle cx="14" cy="28" r="2"   fill="#c2e8c9"/>
+    <circle cx="22" cy="28" r="2"   fill="#c2e8c9"/>
+    <circle cx="28" cy="28" r="2"   fill="#c2e8c9"/>
+    <line x1="18" y1="12" x2="11" y2="16.5" stroke="#5ab068" strokeWidth="1.3"/>
+    <line x1="18" y1="12" x2="25" y2="16.5" stroke="#5ab068" strokeWidth="1.3"/>
+    <line x1="11" y1="21.5" x2="8"  y2="26" stroke="#5ab068" strokeWidth="1.3"/>
+    <line x1="11" y1="21.5" x2="14" y2="26" stroke="#5ab068" strokeWidth="1.3"/>
+    <line x1="25" y1="21.5" x2="22" y2="26" stroke="#5ab068" strokeWidth="1.3"/>
+    <line x1="25" y1="21.5" x2="28" y2="26" stroke="#5ab068" strokeWidth="1.3"/>
+  </svg>
+);
+
+// ─── AVATAR ───────────────────────────────────────────────────────────────────
+const Av = ({p, size=46}) => {
+  const url = p?.photo_url||p?.photoUrl;
+  const isFemale = (p?.gender||'').toLowerCase().includes('f');
+  const bg = isFemale ? '#fce4e4' : 'var(--g100)';
+  const col = isFemale ? '#c05050' : 'var(--g600)';
+  return (
+    <div className="av" style={{width:size,height:size,background:url?'transparent':bg,color:col,fontSize:size*0.3,border:`2px solid ${isFemale?'#e4b0b0':'var(--g200)'}`}}>
+      {url ? <img src={url} alt={full(p)}/> : init(p||{first_name:'?',last_name:'?'})}
+    </div>
+  );
+};
+
+// ─── SPINNER ─────────────────────────────────────────────────────────────────
+const Spinner = () => <div className="spin-wrap"><div className="spin"/></div>;
+
+// ══════════════════════════════════════════════════════
+//  SETUP SCREEN (when keys not configured)
+// ══════════════════════════════════════════════════════
+const SetupScreen = () => (
+  <div className="setup">
+    <div className="flex items-c gap-2 mb-3"><Logo size={36}/><h2 style={{fontSize:'1.4rem',color:'var(--g900)'}}>AfricanLineage Setup</h2></div>
+    <p style={{color:'var(--tm)',fontSize:'.9rem',marginBottom:'1.25rem',lineHeight:1.7}}>
+      To use AfricanLineage.com with real data persistence, connect your Supabase project by replacing the two placeholder values at the top of the script.
+    </p>
+    <div className="setup-step">
+      <strong style={{color:'var(--g800)',fontSize:'.875rem'}}>Step 1 — Create a Supabase project</strong>
+      <p style={{fontSize:'.82rem',color:'var(--tm)',marginTop:'.35rem'}}>Go to <a href="https://supabase.com" target="_blank" style={{color:'var(--g600)'}}>supabase.com</a> and create a free project.</p>
+    </div>
+    <div className="setup-step">
+      <strong style={{color:'var(--g800)',fontSize:'.875rem'}}>Step 2 — Run the SQL schema</strong>
+      <p style={{fontSize:'.82rem',color:'var(--tm)',marginTop:'.35rem'}}>Open the SQL Editor in your Supabase dashboard and run the schema block found in the <code>/* SQL SCHEMA */</code> comment at the top of this file's script section.</p>
+    </div>
+    <div className="setup-step">
+      <strong style={{color:'var(--g800)',fontSize:'.875rem'}}>Step 3 — Add your API keys</strong>
+      <p style={{fontSize:'.82rem',color:'var(--tm)',marginTop:'.35rem'}}>Go to <b>Settings → API</b> in Supabase and copy your <code>Project URL</code> and <code>anon public</code> key into the <code>SUPABASE_URL</code> and <code>SUPABASE_ANON</code> variables at the top of this file.</p>
+    </div>
+    <div className="setup-step">
+      <strong style={{color:'var(--g800)',fontSize:'.875rem'}}>Step 4 — Enable Email Auth</strong>
+      <p style={{fontSize:'.82rem',color:'var(--tm)',marginTop:'.35rem'}}>In Supabase, go to <b>Authentication → Providers</b> and ensure <b>Email</b> is enabled. For development, disable email confirmations under <b>Auth → Settings</b>.</p>
+    </div>
+    <div style={{background:'var(--g50)',borderRadius:'var(--r-md)',padding:'1rem',marginTop:'.5rem',fontSize:'.8rem',color:'var(--tm)'}}>
+      💡 <strong>Quick test:</strong> Set <code>SUPABASE_URL</code> to your project URL (e.g. <code>https://xxxx.supabase.co</code>) and <code>SUPABASE_ANON</code> to your anon key. Save the file and reload.
+    </div>
+  </div>
+);
+
+const ModeNotice = () => (
+  <div style={{background:'var(--g100)',borderBottom:'1px solid var(--g200)',padding:'.7rem 1rem',fontSize:'.82rem',color:'var(--g700)',textAlign:'center'}}>
+    {USING_LOCAL_MODE ? 'Local mode is active. Your data is saved in this browser until you add real values in config.js and connect Supabase.' : `Supabase mode is active. Database and storage uploads are using your ${SUPABASE_BUCKET} bucket.`}
+  </div>
+);
+
+// ══════════════════════════════════════════════════════
+//  AUTH FORMS
+// ══════════════════════════════════════════════════════
+const LoginModal = ({onClose, onDone, onSwitch}) => {
+  const [f,setF] = useState({email:'',password:''});
+  const [err,setErr] = useState('');
+  const [loading,setLoading] = useState(false);
+  const set = k => e => setF(p=>({...p,[k]:e.target.value}));
+
+  const submit = async e => {
+    e.preventDefault(); setErr(''); setLoading(true);
+    const {user,error} = await api.signIn({email:f.email,password:f.password});
+    if(error) setErr(error.message);
+    else onDone(user);
+    setLoading(false);
+  };
+  return (
+    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <button className="modal-close" onClick={onClose}>✕</button>
+        <div className="text-c mb-3"><Logo size={38}/><h2 className="mt-2">Welcome Back</h2><p className="modal-sub">Sign in to continue your ancestry journey</p></div>
+        {err && <div className="form-err">{err}</div>}
+        <form onSubmit={submit}>
+          <div className="form-group"><label className="form-label">Email</label><input className="form-input" type="email" value={f.email} onChange={set('email')} placeholder="you@email.com" required/></div>
+          <div className="form-group"><label className="form-label">Password</label><input className="form-input" type="password" value={f.password} onChange={set('password')} placeholder="••••••••" required/></div>
+          <button className="btn btn-primary w-full mt-2" type="submit" disabled={loading} style={{justifyContent:'center'}}>
+            {loading?<span className="loading-dots">Signing in</span>:'Sign In'}
+          </button>
+        </form>
+        <div className="form-divider">or</div>
+        <p className="text-c" style={{fontSize:'.86rem',color:'var(--tl)'}}>New here? <span style={{color:'var(--g600)',cursor:'pointer',fontWeight:600}} onClick={onSwitch}>Create free account →</span></p>
+      </div>
+    </div>
+  );
+};
+
+const SignupModal = ({onClose, onDone, onSwitch}) => {
+  const [f,setF] = useState({name:'',email:'',password:'',confirm:'',region:'',ancestor:''});
+  const [err,setErr] = useState('');
+  const [ok,setOk] = useState('');
+  const [loading,setLoading] = useState(false);
+  const set = k => e => setF(p=>({...p,[k]:e.target.value}));
+  const regions = ['West Africa','East Africa','Central Africa','Southern Africa','North Africa','Diaspora – Americas','Diaspora – UK/Europe','Diaspora – Caribbean'];
+
+  const submit = async e => {
+    e.preventDefault(); setErr('');
+    if(f.password!==f.confirm) return setErr('Passwords do not match.');
+    if(f.password.length<6) return setErr('Password must be at least 6 characters.');
+    setLoading(true);
+    const {user,session,error} = await api.signUp({email:f.email,password:f.password,name:f.name,region:f.region,ancestor:f.ancestor});
+    if(error){setErr(error.message);setLoading(false);return;}
+    // check if session exists immediately (email confirm disabled) or needs email
+    if(session){
+      onDone(user);
+    } else {
+      setOk('Account created! Check your email to confirm, then sign in.');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal" style={{maxWidth:500}}>
+        <button className="modal-close" onClick={onClose}>✕</button>
+        <div className="text-c mb-3"><Logo size={38}/><h2 className="mt-2">Create Your Profile</h2><p className="modal-sub">Begin your African ancestry journey</p></div>
+        {err && <div className="form-err">{err}</div>}
+        {ok  && <div className="form-ok">{ok}</div>}
+        {!ok && (
+          <form onSubmit={submit}>
+            <div className="form-group"><label className="form-label">Full Name *</label><input className="form-input" value={f.name} onChange={set('name')} placeholder="Kofi Mensah" required/></div>
+            <div className="form-group"><label className="form-label">Email *</label><input className="form-input" type="email" value={f.email} onChange={set('email')} required/></div>
+            <div className="form-row">
+              <div className="form-group"><label className="form-label">Password *</label><input className="form-input" type="password" value={f.password} onChange={set('password')} placeholder="Min 6 chars" required/></div>
+              <div className="form-group"><label className="form-label">Confirm *</label><input className="form-input" type="password" value={f.confirm} onChange={set('confirm')} placeholder="Repeat" required/></div>
+            </div>
+            <div className="form-group"><label className="form-label">Ancestral Region</label>
+              <select className="form-input" value={f.region} onChange={set('region')}><option value="">Select…</option>{regions.map(r=><option key={r}>{r}</option>)}</select>
+            </div>
+            <div className="form-group"><label className="form-label">First Known Ancestor (optional)</label><input className="form-input" value={f.ancestor} onChange={set('ancestor')} placeholder="e.g. Kwame Mensah"/></div>
+            <button className="btn btn-primary w-full mt-2" type="submit" disabled={loading} style={{justifyContent:'center'}}>
+              {loading?<span className="loading-dots">Creating account</span>:'Create Free Account'}
+            </button>
+          </form>
+        )}
+        <p className="text-c mt-3" style={{fontSize:'.82rem',color:'var(--tl)'}}>Already have an account? <span style={{color:'var(--g600)',cursor:'pointer',fontWeight:600}} onClick={onSwitch}>Sign in →</span></p>
+      </div>
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════
+//  PERSON FORM (add / edit)
+// ══════════════════════════════════════════════════════
+const PersonForm = ({person,persons,onSave,onCancel,loading}) => {
+  const blank = {first_name:'',last_name:'',gender:'male',birth_year:'',birth_place:'',death_year:'',death_place:'',occupation:'',nationality:'',religion:'',notes:'',photo_url:'',father_id:'',mother_id:'',spouse_id:''};
+  const [f,setF] = useState(person?{...blank,...person}:blank);
+  const set = k => e => setF(p=>({...p,[k]:e.target.value}));
+  const others = persons.filter(p=>p.id!==f.id);
+
+  return (
+    <div>
+      <div className="form-row">
+        <div className="form-group"><label className="form-label">First Name *</label><input className="form-input" value={f.first_name} onChange={set('first_name')} required/></div>
+        <div className="form-group"><label className="form-label">Last Name *</label><input className="form-input" value={f.last_name} onChange={set('last_name')} required/></div>
+      </div>
+      <div className="form-row">
+        <div className="form-group"><label className="form-label">Gender</label>
+          <select className="form-input" value={f.gender} onChange={set('gender')}><option value="male">Male</option><option value="female">Female</option><option value="other">Other / Unknown</option></select>
+        </div>
+        <div className="form-group"><label className="form-label">Occupation</label><input className="form-input" value={f.occupation} onChange={set('occupation')}/></div>
+      </div>
+      <div className="form-row">
+        <div className="form-group"><label className="form-label">Birth Year</label><input className="form-input" type="number" value={f.birth_year} onChange={set('birth_year')} placeholder="e.g. 1945"/></div>
+        <div className="form-group"><label className="form-label">Birth Place</label><input className="form-input" value={f.birth_place} onChange={set('birth_place')} placeholder="City, Country"/></div>
+      </div>
+      <div className="form-row">
+        <div className="form-group"><label className="form-label">Death Year (blank if living)</label><input className="form-input" type="number" value={f.death_year} onChange={set('death_year')}/></div>
+        <div className="form-group"><label className="form-label">Death Place</label><input className="form-input" value={f.death_place} onChange={set('death_place')}/></div>
+      </div>
+      <div className="form-row">
+        <div className="form-group"><label className="form-label">Nationality</label><input className="form-input" value={f.nationality} onChange={set('nationality')}/></div>
+        <div className="form-group"><label className="form-label">Religion</label><input className="form-input" value={f.religion} onChange={set('religion')}/></div>
+      </div>
+      <div className="form-row">
+        <div className="form-group"><label className="form-label">Father</label>
+          <select className="form-input" value={f.father_id} onChange={set('father_id')}><option value="">None</option>
+            {others.filter(p=>p.gender==='male'||p.gender==='other').map(p=><option key={p.id} value={p.id}>{full(p)}</option>)}
+          </select>
+        </div>
+        <div className="form-group"><label className="form-label">Mother</label>
+          <select className="form-input" value={f.mother_id} onChange={set('mother_id')}><option value="">None</option>
+            {others.filter(p=>p.gender==='female'||p.gender==='other').map(p=><option key={p.id} value={p.id}>{full(p)}</option>)}
+          </select>
+        </div>
+      </div>
+      <div className="form-group"><label className="form-label">Spouse / Partner</label>
+        <select className="form-input" value={f.spouse_id} onChange={set('spouse_id')}><option value="">None</option>
+          {others.map(p=><option key={p.id} value={p.id}>{full(p)}</option>)}
+        </select>
+      </div>
+      <div className="form-group"><label className="form-label">Photo URL (optional)</label><input className="form-input" value={f.photo_url} onChange={set('photo_url')} placeholder="https://…"/></div>
+      <div className="form-group"><label className="form-label">Biography & Notes</label><textarea className="form-input" rows={3} value={f.notes} onChange={set('notes')} placeholder="Life story, achievements, memories…" style={{resize:'vertical'}}/></div>
+      <div className="flex gap-2 mt-3 jb">
+        <button className="btn btn-ghost" onClick={onCancel}>Cancel</button>
+        <button className="btn btn-primary" onClick={()=>onSave(f)} disabled={loading}>
+          {loading?<span className="loading-dots">Saving</span>:'💾 Save Person'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════
+//  FAMILY TREE SVG VISUAL
+// ══════════════════════════════════════════════════════
+const TreeVisual = ({persons, onSelect, selId}) => {
+  const [zoom,setZoom] = useState(1);
+  const NW=165, NH=68, HG=28, VG=85;
+
+  const roots   = persons.filter(p=>!p.father_id&&!p.mother_id);
+  const gen1    = persons.filter(p=>(p.father_id||p.mother_id)&&(() => {
+    const f=persons.find(x=>x.id===p.father_id);const m=persons.find(x=>x.id===p.mother_id);
+    return !f?.father_id&&!f?.mother_id&&!m?.father_id&&!m?.mother_id;
+  })());
+  const gen2    = persons.filter(p=>!roots.find(x=>x.id===p.id)&&!gen1.find(x=>x.id===p.id));
+  const gens    = [roots,gen1,gen2].filter(g=>g.length>0);
+  const maxCols = Math.max(...gens.map(g=>g.length),1);
+  const svgW    = Math.max(680, maxCols*(NW+HG)+80);
+  const svgH    = gens.length*(NH+VG)+80;
+
+  const pos = {};
+  gens.forEach((gen,gi)=>{
+    const total = gen.length*NW+(gen.length-1)*HG;
+    const startX = (svgW-total)/2;
+    gen.forEach((p,i)=>{ pos[p.id]={x:startX+i*(NW+HG), y:40+gi*(NH+VG)}; });
+  });
+
+  return (
+    <div className="tree-wrap">
+      <div className="tree-toolbar no-print">
+        <button className="btn btn-ghost btn-sm" onClick={()=>setZoom(z=>Math.max(.45,z-.1))}>🔍−</button>
+        <span style={{fontSize:'.78rem',color:'var(--tl)',minWidth:32,textAlign:'center'}}>{Math.round(zoom*100)}%</span>
+        <button className="btn btn-ghost btn-sm" onClick={()=>setZoom(z=>Math.min(2,z+.1))}>🔍+</button>
+        <button className="btn btn-ghost btn-sm" onClick={()=>setZoom(1)}>Reset</button>
+        <span>{persons.length} people</span>
+        <button className="btn btn-ghost btn-sm no-print" onClick={()=>window.print()}>🖨️ Print</button>
+      </div>
+      <div className="tree-scroll">
+        {persons.length===0 ? (
+          <div className="empty"><div className="ei">🌳</div><p>No people yet — add your first family member</p></div>
+        ) : (
+          <div style={{transform:`scale(${zoom})`,transformOrigin:'top left',transition:'transform .2s',width:`${100/zoom}%`}}>
+            <svg width={svgW} height={svgH} xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <filter id="ns"><feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#0f2e14" floodOpacity=".07"/></filter>
+              </defs>
+              {persons.map(p=>{
+                const pp=pos[p.id]; if(!pp) return null;
+                return [
+                  p.father_id && pos[p.father_id] && (() => {
+                    const fp=pos[p.father_id];
+                    return <path key={`f${p.id}`} d={`M${fp.x+NW/2},${fp.y+NH} C${fp.x+NW/2},${fp.y+NH+VG/2} ${pp.x+NW/2},${pp.y-VG/2} ${pp.x+NW/2},${pp.y}`} stroke="var(--g200)" strokeWidth="1.5" fill="none"/>;
+                  })(),
+                  p.mother_id && pos[p.mother_id] && (() => {
+                    const mp=pos[p.mother_id];
+                    return <path key={`m${p.id}`} d={`M${mp.x+NW/2},${mp.y+NH} C${mp.x+NW/2},${mp.y+NH+VG/2} ${pp.x+NW/2},${pp.y-VG/2} ${pp.x+NW/2},${pp.y}`} stroke="#e4b0b0" strokeWidth="1.5" fill="none"/>;
+                  })(),
+                  p.spouse_id && pos[p.spouse_id] && p.id<p.spouse_id && (() => {
+                    const sp=pos[p.spouse_id];
+                    return <line key={`s${p.id}`} x1={pp.x+NW} y1={pp.y+NH/2} x2={sp.x} y2={sp.y+NH/2} stroke="var(--g300)" strokeWidth="1.8" strokeDasharray="5,3"/>;
+                  })()
+                ].filter(Boolean);
+              })}
+              {persons.map(p=>{
+                const pp=pos[p.id]; if(!pp) return null;
+                const sel=selId===p.id;
+                const fem=(p.gender||'').includes('f');
+                return (
+                  <g key={p.id} className="tree-node-g" transform={`translate(${pp.x},${pp.y})`} onClick={()=>onSelect(p)} filter="url(#ns)">
+                    <rect width={NW} height={NH} rx="10" fill={sel?'var(--g100)':fem?'#fff8f8':'var(--white)'} stroke={sel?'var(--g600)':fem?'#e4b0b0':'var(--g200)'} strokeWidth={sel?2.5:1.5}/>
+                    <circle cx="21" cy="34" r="15" fill={fem?'#fce4e4':'var(--g100)'} stroke={fem?'#e4b0b0':'var(--g200)'} strokeWidth="1"/>
+                    <text x="21" y="39" textAnchor="middle" fontSize="11" fontWeight="700" fill={fem?'#c05050':'var(--g600)'} fontFamily="Quicksand,sans-serif">{init(p)}</text>
+                    <text x="42" y="26" fontSize="12" fontWeight="700" fill="var(--g900)" fontFamily="Quicksand,sans-serif">{p.first_name}</text>
+                    <text x="42" y="40" fontSize="11" fill="var(--tm)" fontFamily="'Source Sans 3',sans-serif">{p.last_name}</text>
+                    <text x="42" y="54" fontSize="10" fill="var(--tl)" fontFamily="'Source Sans 3',sans-serif">{span(p)}</text>
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════
+//  PERSON DETAIL MODAL
+// ══════════════════════════════════════════════════════
+const PersonDetail = ({p, persons, onEdit, onDelete, onClose}) => {
+  const father  = persons.find(x=>x.id===p.father_id);
+  const mother  = persons.find(x=>x.id===p.mother_id);
+  const spouse  = persons.find(x=>x.id===p.spouse_id);
+  const children = persons.filter(x=>x.father_id===p.id||x.mother_id===p.id);
+  return (
+    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal modal-lg">
+        <button className="modal-close" onClick={onClose}>✕</button>
+        <div className="flex items-c gap-3 mb-3">
+          <Av p={p} size={68}/>
+          <div style={{flex:1}}>
+            <h2 style={{fontSize:'1.45rem'}}>{full(p)}</h2>
+            <p style={{color:'var(--tl)',fontSize:'.875rem'}}>{span(p)}{p.birth_place?` · ${p.birth_place}`:''}</p>
+            {p.occupation && <span className="badge badge-green mt-1">{p.occupation}</span>}
+          </div>
+          <div className="flex gap-2">
+            <button className="btn btn-secondary btn-sm" onClick={onEdit}>✏️ Edit</button>
+            <button className="btn btn-danger btn-sm" onClick={()=>{if(confirm(`Delete ${full(p)}?`)){onDelete(p.id);onClose();}}}>🗑️</button>
+          </div>
+        </div>
+        <div className="divider"/>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.5rem'}}>
+          <div>
+            <div style={{fontSize:'.75rem',color:'var(--tl)',textTransform:'uppercase',letterSpacing:'.08em',marginBottom:'.65rem',fontWeight:700}}>Personal Details</div>
+            {[['Gender',p.gender],['Nationality',p.nationality],['Religion',p.religion],['Occupation',p.occupation],['Death Place',p.death_place]].filter(([,v])=>v).map(([l,v])=>(
+              <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'.4rem 0',borderBottom:'1px solid var(--g50)',fontSize:'.875rem'}}>
+                <span style={{color:'var(--tl)'}}>{l}</span><span style={{fontWeight:600,color:'var(--g900)'}}>{v}</span>
+              </div>
+            ))}
+          </div>
+          <div>
+            <div style={{fontSize:'.75rem',color:'var(--tl)',textTransform:'uppercase',letterSpacing:'.08em',marginBottom:'.65rem',fontWeight:700}}>Family</div>
+            {father&&<div style={{display:'flex',justifyContent:'space-between',padding:'.4rem 0',borderBottom:'1px solid var(--g50)',fontSize:'.875rem'}}><span style={{color:'var(--tl)'}}>Father</span><span style={{color:'var(--g700)',fontWeight:600}}>{full(father)}</span></div>}
+            {mother&&<div style={{display:'flex',justifyContent:'space-between',padding:'.4rem 0',borderBottom:'1px solid var(--g50)',fontSize:'.875rem'}}><span style={{color:'var(--tl)'}}>Mother</span><span style={{color:'var(--g700)',fontWeight:600}}>{full(mother)}</span></div>}
+            {spouse&&<div style={{display:'flex',justifyContent:'space-between',padding:'.4rem 0',borderBottom:'1px solid var(--g50)',fontSize:'.875rem'}}><span style={{color:'var(--tl)'}}>Spouse</span><span style={{color:'var(--g700)',fontWeight:600}}>{full(spouse)}</span></div>}
+            {children.length>0&&<div style={{padding:'.4rem 0',fontSize:'.875rem'}}><span style={{color:'var(--tl)'}}>Children ({children.length})</span><span style={{display:'block',color:'var(--g700)',fontWeight:600,marginTop:'.2rem'}}>{children.map(full).join(', ')}</span></div>}
+          </div>
+        </div>
+        {p.notes&&<><div className="divider"/><div style={{fontSize:'.75rem',color:'var(--tl)',textTransform:'uppercase',letterSpacing:'.08em',marginBottom:'.5rem',fontWeight:700}}>Biography</div><p style={{fontSize:'.9rem',color:'var(--tm)',lineHeight:1.7}}>{p.notes}</p></>}
+      </div>
+    </div>
+  );
+};
+
+const RecordDetailModal = ({record, onClose}) => (
+  <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+    <div className="modal">
+      <button className="modal-close" onClick={onClose}>✕</button>
+      <div className="flex items-c gap-2 mb-2"><span className="badge badge-green">{record.type}</span><span style={{fontSize:'.78rem',color:'var(--tl)'}}>{record.year}</span></div>
+      <h2>{record.name}</h2>
+      <p className="modal-sub">{record.region} · {record.collection}</p>
+      <p style={{fontSize:'.9rem',color:'var(--tm)',lineHeight:1.75}}>{record.desc}</p>
+      <div className="divider"/>
+      <div className="mk-grid" style={{gridTemplateColumns:'1fr 1fr'}}>
+        <div className="mk-panel"><h3 style={{marginBottom:'.4rem'}}>Collection</h3><p style={{fontSize:'.84rem',color:'var(--tm)'}}>{record.collection}</p></div>
+        <div className="mk-panel"><h3 style={{marginBottom:'.4rem'}}>Region</h3><p style={{fontSize:'.84rem',color:'var(--tm)'}}>{record.region}</p></div>
+      </div>
+    </div>
+  </div>
+);
+
+// ══════════════════════════════════════════════════════
+//  TREES PAGE
+// ══════════════════════════════════════════════════════
+const TreesPage = ({user, trees, reloadTrees}) => {
+  const [selTreeId,setSelTreeId] = useState(trees[0]?.id||null);
+  const [persons,setPersons]     = useState([]);
+  const [photos,setPhotos]       = useState([]);
+  const [gedFiles,setGedFiles]   = useState([]);
+  const [tab,setTab]             = useState('visual');
+  const [search,setSearch]       = useState('');
+  const [showAdd,setShowAdd]     = useState(false);
+  const [editP,setEditP]         = useState(null);
+  const [viewP,setViewP]         = useState(null);
+  const [selNode,setSelNode]      = useState(null);
+  const [showNewTree,setShowNewTree] = useState(false);
+  const [newTreeName,setNewTreeName] = useState('');
+  const [loading,setLoading]     = useState(false);
+  const [saving,setSaving]       = useState(false);
+  const [drag,setDrag]           = useState(false);
+  const fileRef                  = useRef();
+
+  const tree = trees.find(t=>t.id===selTreeId)||null;
+
+  useEffect(()=>{
+    if(selTreeId) loadPersons(selTreeId);
+  },[selTreeId]);
+
+  useEffect(()=>{
+    if(trees.length&&!selTreeId) setSelTreeId(trees[0].id);
+  },[trees]);
+
+  const loadPersons = async (tid) => {
+    setLoading(true);
+    const [pData, phData, gData] = await Promise.all([
+      api.getPersons(tid),
+      api.getPhotos(tid),
+      api.getGedFiles(tid),
+    ]);
+    setPersons(pData||[]);
+    setPhotos(phData||[]);
+    setGedFiles(gData||[]);
+    setLoading(false);
+  };
+
+  const savePerson = async (f) => {
+    setSaving(true);
+    const payload = {...f, tree_id:selTreeId, user_id:user.id,
+      birth_year:f.birth_year?parseInt(f.birth_year):null,
+      death_year:f.death_year?parseInt(f.death_year):null,
+      father_id:f.father_id||null, mother_id:f.mother_id||null, spouse_id:f.spouse_id||null,
+    };
+    if(editP?.id) payload.id = editP.id;
+    await api.savePerson(payload);
+    await loadPersons(selTreeId);
+    setShowAdd(false); setEditP(null); setSaving(false);
+  };
+
+  const deletePerson = async (id) => {
+    await api.deletePerson(id);
+    loadPersons(selTreeId);
+  };
+
+  const createTree = async () => {
+    if(!newTreeName.trim()) return;
+    setSaving(true);
+    const data = await api.createTree({tree_name:newTreeName,userId:user.id});
+    await reloadTrees();
+    if(data) setSelTreeId(data.id);
+    setShowNewTree(false); setNewTreeName(''); setSaving(false);
+  };
+
+  const deleteTree = async () => {
+    if(!confirm('Delete this entire tree and all its people? This cannot be undone.')) return;
+    await api.deleteTree(selTreeId);
+    await reloadTrees();
+    setSelTreeId(null); setPersons([]); setPhotos([]);
+  };
+
+  const handleFiles = async (files) => {
+    const arr = Array.from(files);
+    try {
+      for(const f of arr){
+        if(f.name.toLowerCase().endsWith('.ged')){
+          await api.addGedFile({tree_id:selTreeId,user_id:user.id,file_name:f.name,file_size:f.size});
+          alert(`✅ GEDCOM "${f.name}" recorded. Full parsing available with backend integration.`);
+        } else if(f.type.startsWith('image/')){
+          await api.addPhoto({tree_id:selTreeId,user_id:user.id,name:f.name.replace(/\.[^.]+$/,''),file:f});
+        }
+      }
+      loadPersons(selTreeId);
+    } catch (err) {
+      alert(`Upload failed: ${err.message || 'Please confirm your Supabase storage bucket and policies are set up.'}`);
+    }
+  };
+
+  const addPhotoByUrl = async (url, name) => {
+    if(!url) return;
+    await api.addPhoto({tree_id:selTreeId,user_id:user.id,name:name||'Photo',url});
+    loadPersons(selTreeId);
+  };
+
+  const deletePhoto = async (id) => {
+    await api.deletePhoto(id);
+    setPhotos(prev=>prev.filter(p=>p.id!==id));
+  };
+
+  const filtered = persons.filter(p=>`${p.first_name} ${p.last_name} ${p.birth_place||''} ${p.occupation||''}`.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <div>
+      {/* Top Bar */}
+      <div className="flex items-c gap-2 mb-3 wrap">
+        <h2 style={{fontSize:'1.25rem',color:'var(--g900)',marginRight:'auto'}}>🌳 Family Trees</h2>
+        {trees.length>0&&(
+          <select className="form-input" style={{width:'auto',borderRadius:'100px',padding:'.38rem 2rem .38rem .875rem'}} value={selTreeId||''} onChange={e=>setSelTreeId(e.target.value)}>
+            {trees.map(t=><option key={t.id} value={t.id}>{t.tree_name}</option>)}
+          </select>
+        )}
+        <button className="btn btn-secondary btn-sm" onClick={()=>setShowNewTree(true)}>➕ New Tree</button>
+        {tree&&<button className="btn btn-primary btn-sm" onClick={()=>setShowAdd(true)}>👤 Add Person</button>}
+        {tree&&<button className="btn btn-danger btn-sm" onClick={deleteTree}>🗑️ Delete Tree</button>}
+      </div>
+
+      {!tree ? (
+        <div className="empty"><div className="ei">🌳</div><p>Create your first family tree to get started.</p>
+          <button className="btn btn-primary mt-3" onClick={()=>setShowNewTree(true)}>➕ Create Tree</button>
+        </div>
+      ) : (
+        <>
+          {/* Search + count */}
+          <div className="flex gap-2 mb-3 items-c wrap">
+            <input className="form-input" style={{maxWidth:280,borderRadius:'100px'}} value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search people…"/>
+            <span style={{fontSize:'.8rem',color:'var(--tl)'}}>{persons.length} people · {photos.length} photos</span>
+          </div>
+
+          {/* Tabs */}
+          <div className="tabs">
+            {[['visual','🌳 Visual Tree'],['list','📋 People'],['timeline','📅 Timeline'],['photos','🖼️ Media'],['ged','📋 GEDCOM'],['stats','📊 Stats']].map(([k,l])=>(
+              <button key={k} className={`tab${tab===k?' active':''}`} onClick={()=>setTab(k)}>{l}</button>
+            ))}
+          </div>
+
+          {loading ? <Spinner/> : (
+            <>
+              {/* VISUAL */}
+              {tab==='visual'&&<TreeVisual persons={search?filtered:persons} onSelect={p=>{setViewP(p);setSelNode(p.id);}} selId={selNode}/>}
+
+              {/* LIST */}
+              {tab==='list'&&(
+                <div className="person-list">
+                  {filtered.length===0&&<div className="empty"><div className="ei">👤</div><p>No people match your search.</p></div>}
+                  {filtered.map(p=>(
+                    <div key={p.id} className="p-card">
+                      <Av p={p} size={50}/>
+                      <div className="p-info">
+                        <div className="p-name">{full(p)}</div>
+                        <div className="p-meta">{span(p)}{p.birth_place?` · ${p.birth_place}`:''}{p.occupation?` · ${p.occupation}`:''}</div>
+                        <div className="flex gap-1 mt-1 wrap">
+                          {p.father_id&&<span className="chip">Has father</span>}
+                          {p.mother_id&&<span className="chip">Has mother</span>}
+                          {p.spouse_id&&<span className="chip">Has spouse</span>}
+                          {persons.filter(x=>x.father_id===p.id||x.mother_id===p.id).length>0&&<span className="chip">{persons.filter(x=>x.father_id===p.id||x.mother_id===p.id).length} children</span>}
+                        </div>
+                      </div>
+                      <div className="p-actions">
+                        <button className="btn btn-ghost btn-sm" onClick={()=>setViewP(p)}>👁️</button>
+                        <button className="btn btn-secondary btn-sm" onClick={()=>setEditP(p)}>✏️</button>
+                        <button className="btn btn-danger btn-sm" onClick={()=>{if(confirm(`Delete ${full(p)}?`)) deletePerson(p.id);}}>🗑️</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* TIMELINE */}
+              {tab==='timeline'&&(
+                <div style={{maxWidth:600}}>
+                  <div className="timeline">
+                    {[...persons].filter(p=>p.birth_year).sort((a,b)=>a.birth_year-b.birth_year).map(p=>(
+                      <div key={p.id} className="tl-item" onClick={()=>setViewP(p)}>
+                        <div className="tl-dot"/>
+                        <div className="tl-date">{p.birth_year}</div>
+                        <div className="tl-body"><strong>{full(p)}</strong> born{p.birth_place?` in ${p.birth_place}`:''}</div>
+                      </div>
+                    ))}
+                    {[...persons].filter(p=>p.death_year).sort((a,b)=>a.death_year-b.death_year).map(p=>(
+                      <div key={`d${p.id}`} className="tl-item">
+                        <div className="tl-dot" style={{background:'var(--tl)'}}/>
+                        <div className="tl-date">{p.death_year}</div>
+                        <div className="tl-body">{full(p)} passed away{p.death_place?` in ${p.death_place}`:''}</div>
+                      </div>
+                    ))}
+                    {persons.length===0&&<div className="empty"><div className="ei">📅</div><p>Add people with birth years to see the timeline.</p></div>}
+                  </div>
+                </div>
+              )}
+
+              {/* PHOTOS */}
+              {tab==='photos'&&(
+                <div>
+                  <div className="photo-grid">
+                    {photos.map(ph=>(
+                      <div key={ph.id} className="ph-item">
+                        {ph.url?<img src={ph.url} alt={ph.name}/>:<div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'2rem',color:'var(--g300)'}}>📷</div>}
+                        <div className="ph-label">{ph.name}</div>
+                        <button className="ph-del" onClick={()=>deletePhoto(ph.id)}>✕</button>
+                      </div>
+                    ))}
+                    <div className="ph-item" onClick={()=>fileRef.current?.click()} style={{background:'var(--g50)',border:'2px dashed var(--g200)',display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:'.3rem',color:'var(--g400)',cursor:'pointer'}}>
+                      <span style={{fontSize:'1.5rem'}}>➕</span><span style={{fontSize:'.72rem',fontWeight:600}}>Add Photo</span>
+                    </div>
+                  </div>
+                  <div className="upload-zone mt-3" onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);handleFiles(e.dataTransfer.files)}} onClick={()=>fileRef.current?.click()}>
+                    <div className="upload-icon">📸</div>
+                    <p style={{color:'var(--tm)',fontWeight:600,marginBottom:'.3rem'}}>Drag & drop or click to upload photos</p>
+                    <p style={{fontSize:'.8rem',color:'var(--tl)'}}>JPG, PNG, GIF supported</p>
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                    <input id="ph-url" className="form-input" placeholder="Or paste photo URL…" style={{flex:1}}/>
+                    <button className="btn btn-primary" onClick={()=>addPhotoByUrl(document.getElementById('ph-url').value,'Added photo')}>Add</button>
+                  </div>
+                  <input ref={fileRef} type="file" multiple accept="image/*,.ged" style={{display:'none'}} onChange={e=>handleFiles(e.target.files)}/>
+                </div>
+              )}
+
+              {/* GEDCOM */}
+              {tab==='ged'&&(
+                <div>
+                  <div className="upload-zone mb-3" onClick={()=>fileRef.current?.click()}>
+                    <div className="upload-icon">📋</div>
+                    <p style={{color:'var(--tm)',fontWeight:600,marginBottom:'.3rem'}}>Upload GEDCOM File (.ged)</p>
+                    <p style={{fontSize:'.82rem',color:'var(--tl)'}}>Import your family tree from Ancestry.com, FamilySearch, or any genealogy software</p>
+                  </div>
+                  {gedFiles.length===0?<div className="empty"><p>No GEDCOM files uploaded yet.</p></div>:gedFiles.map(f=>(
+                    <div key={f.id} className="s-result" style={{cursor:'default'}}>
+                      <div className="flex items-c gap-3">
+                        <span style={{fontSize:'1.75rem'}}>📋</span>
+                        <div style={{flex:1}}>
+                          <div className="r-name">{f.file_name}</div>
+                          <div className="r-meta">{new Date(f.created_at).toLocaleDateString()} · {(f.file_size/1024).toFixed(1)} KB</div>
+                        </div>
+                        <span className="badge badge-green">Uploaded</span>
+                      </div>
+                    </div>
+                  ))}
+                  <input ref={fileRef} type="file" multiple accept="image/*,.ged" style={{display:'none'}} onChange={e=>handleFiles(e.target.files)}/>
+                </div>
+              )}
+
+              {/* STATS */}
+              {tab==='stats'&&(
+                <div>
+                  <div className="dash-grid mb-3">
+                    {[['👥 Total People',persons.length],['♂️ Male',persons.filter(p=>p.gender==='male').length],['♀️ Female',persons.filter(p=>p.gender==='female').length],['📸 Photos',photos.length],['📋 GEDCOM Files',gedFiles.length],['📍 Locations',new Set(persons.map(p=>p.birth_place).filter(Boolean)).size]].map(([l,n])=>(
+                      <div key={l} className="ds-card"><span className="ds-n">{n}</span><span className="ds-l">{l}</span></div>
+                    ))}
+                  </div>
+                  {[...new Set(persons.map(p=>p.birth_place).filter(Boolean))].length>0&&(
+                    <div className="card"><h3 style={{marginBottom:'.875rem'}}>🌍 Birth Locations</h3>
+                      <div className="flex gap-1 wrap">{[...new Set(persons.map(p=>p.birth_place).filter(Boolean))].map(bp=><span key={bp} className="chip">{bp}</span>)}</div>
+                    </div>
+                  )}
+                  {persons.filter(p=>p.occupation).length>0&&(
+                    <div className="card mt-3"><h3 style={{marginBottom:'.875rem'}}>💼 Occupations</h3>
+                      <div className="flex gap-1 wrap">{[...new Set(persons.map(p=>p.occupation).filter(Boolean))].map(o=><span key={o} className="chip">{o}</span>)}</div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </>
+      )}
+
+      {/* New Tree Modal */}
+      {showNewTree&&(
+        <div className="overlay" onClick={e=>e.target===e.currentTarget&&setShowNewTree(false)}>
+          <div className="modal" style={{maxWidth:380}}>
+            <button className="modal-close" onClick={()=>setShowNewTree(false)}>✕</button>
+            <h2>Create New Tree</h2><p className="modal-sub">Give your family tree a name</p>
+            <div className="form-group"><input className="form-input" value={newTreeName} onChange={e=>setNewTreeName(e.target.value)} placeholder="e.g. The Mensah Family Tree" autoFocus onKeyDown={e=>e.key==='Enter'&&createTree()}/></div>
+            <button className="btn btn-primary w-full" onClick={createTree} disabled={saving} style={{justifyContent:'center'}}>
+              {saving?<span className="loading-dots">Creating</span>:'Create Tree'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Add/Edit Person Modal */}
+      {(showAdd||editP)&&(
+        <div className="overlay" onClick={e=>e.target===e.currentTarget&&(setShowAdd(false),setEditP(null))}>
+          <div className="modal modal-lg">
+            <button className="modal-close" onClick={()=>{setShowAdd(false);setEditP(null);}}>✕</button>
+            <h2>{editP?'Edit Person':'Add New Person'}</h2>
+            <p className="modal-sub">{editP?`Editing ${full(editP)}`:'Add a family member to your tree'}</p>
+            <PersonForm person={editP} persons={persons} onSave={savePerson} onCancel={()=>{setShowAdd(false);setEditP(null);}} loading={saving}/>
+          </div>
+        </div>
+      )}
+
+      {/* View Person */}
+      {viewP&&<PersonDetail p={viewP} persons={persons} onEdit={()=>{setEditP(viewP);setViewP(null);}} onDelete={deletePerson} onClose={()=>setViewP(null)}/>}
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════
+//  SEARCH PAGE
+// ══════════════════════════════════════════════════════
+const SearchPage = ({user, trees}) => {
+  const [query,setQuery]   = useState('');
+  const [type,setType]     = useState('all');
+  const [region,setRegion] = useState('all');
+  const [persons,setPersons] = useState([]);
+  const [viewP,setViewP]   = useState(null);
+  const [viewR,setViewR]   = useState(null);
+  const [loading,setLoading] = useState(false);
+
+  useEffect(()=>{
+    // load all persons from all user trees for cross-tree search
+    const loadAll = async () => {
+      if(!user||!trees.length) return;
+      setLoading(true);
+      const treeIds = trees.map(t=>t.id);
+      const data = await api.getPersonsForTrees(treeIds);
+      setPersons(data||[]);
+      setLoading(false);
+    };
+    loadAll();
+  },[trees]);
+
+  const treeOf = pid => trees.find(t=>persons.find(p=>p.id===pid&&p.tree_id===t.id));
+
+  const pMatches = persons.filter(p=>!query||`${p.first_name} ${p.last_name} ${p.birth_place||''} ${p.occupation||''} ${p.notes||''}`.toLowerCase().includes(query.toLowerCase()));
+  const rMatches = RECORDS.filter(r=>
+    (!query||`${r.name} ${r.desc} ${r.collection}`.toLowerCase().includes(query.toLowerCase()))&&
+    (type==='all'||r.type===type)&&
+    (region==='all'||r.region.toLowerCase().includes(region.toLowerCase()))
+  );
+
+  const types = ['all','Census Record','Birth Certificate','Marriage Record','Military Record','Newspaper','Land Deed','Ship Manifest','Burial Record'];
+  const regions = ['all','West Africa','East Africa','Southern Africa','North Africa','UK / Europe'];
+
+  return (
+    <div>
+      <div className="dash-head"><h1>🔍 Search Ancestry Records</h1><p>Search your family trees and historical African records archive</p></div>
+      <div className="card mb-3">
+        <div className="search-bar">
+          <input className="form-input" style={{flex:1}} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search names, places, records… (e.g. Mensah, Accra, 1940s)"/>
+          <button className="btn btn-primary">🔍 Search</button>
+        </div>
+        <div className="form-row mt-2">
+          <div className="form-group"><label className="form-label">Record Type</label>
+            <select className="form-input" value={type} onChange={e=>setType(e.target.value)}>
+              {types.map(t=><option key={t} value={t}>{t==='all'?'All Types':t}</option>)}
+            </select>
+          </div>
+          <div className="form-group"><label className="form-label">Region</label>
+            <select className="form-input" value={region} onChange={e=>setRegion(e.target.value)}>
+              {regions.map(r=><option key={r} value={r}>{r==='all'?'All Regions':r}</option>)}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {loading ? <Spinner/> : (
+        <>
+          {(query||type!=='all'||region!=='all') ? (
+            <>
+              {pMatches.length>0&&(
+                <>
+                  <div style={{fontSize:'.78rem',color:'var(--tl)',textTransform:'uppercase',letterSpacing:'.1em',marginBottom:'.65rem',fontWeight:700}}>From Your Trees ({pMatches.length})</div>
+                  {pMatches.map(p=>(
+                    <div key={p.id} className="s-result" onClick={()=>setViewP(p)}>
+                      <div className="flex items-c gap-3">
+                        <Av p={p} size={42}/>
+                        <div style={{flex:1}}>
+                          <div className="r-name">{full(p)}</div>
+                          <div className="r-meta">{span(p)}{p.birth_place?` · ${p.birth_place}`:''}</div>
+                          <div className="r-tags"><span className="tag">🌳 In your tree</span>{p.occupation&&<span className="tag">{p.occupation}</span>}</div>
+                        </div>
+                        <span style={{color:'var(--g500)'}}>→</span>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+              {rMatches.length>0&&(
+                <>
+                  <div style={{fontSize:'.78rem',color:'var(--tl)',textTransform:'uppercase',letterSpacing:'.1em',margin:'1.25rem 0 .65rem',fontWeight:700}}>Historical Records ({rMatches.length})</div>
+                  {rMatches.map(r=>(
+                    <div key={r.id} className="s-result">
+                      <div className="flex items-c gap-3">
+                        <div style={{width:42,height:42,background:'var(--g50)',borderRadius:'var(--r-sm)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.2rem',flexShrink:0}}>📜</div>
+                        <div style={{flex:1}}>
+                          <div className="r-name">{r.name}</div>
+                          <div className="r-meta">{r.year} · {r.region} · {r.collection}</div>
+                          <p style={{fontSize:'.82rem',color:'var(--tm)',marginTop:'.2rem'}}>{r.desc}</p>
+                          <div className="r-tags"><span className="tag">📁 {r.type}</span><span className="tag">📍 {r.region}</span></div>
+                        </div>
+                        <button className="btn btn-secondary btn-sm" onClick={e=>{e.stopPropagation();setViewR(r);}}>View</button>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+              {pMatches.length===0&&rMatches.length===0&&<div className="empty"><div className="ei">🔍</div><p>No results for "{query}". Try a different name or region.</p></div>}
+            </>
+          ) : (
+            <>
+              <div style={{fontSize:'.78rem',color:'var(--tl)',textTransform:'uppercase',letterSpacing:'.1em',marginBottom:'.65rem',fontWeight:700}}>Browse Historical Records Archive</div>
+              {RECORDS.map(r=>(
+                <div key={r.id} className="s-result">
+                  <div className="flex items-c gap-3">
+                    <div style={{width:42,height:42,background:'var(--g50)',borderRadius:'var(--r-sm)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.2rem',flexShrink:0}}>📜</div>
+                    <div style={{flex:1}}>
+                      <div className="r-name">{r.name}</div>
+                      <div className="r-meta">{r.year} · {r.region} · {r.collection}</div>
+                      <p style={{fontSize:'.82rem',color:'var(--tm)',marginTop:'.2rem'}}>{r.desc}</p>
+                      <div className="r-tags"><span className="tag">📁 {r.type}</span></div>
+                    </div>
+                    <button className="btn btn-secondary btn-sm" onClick={()=>setViewR(r)}>View</button>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+        </>
+      )}
+      {viewP&&<PersonDetail p={viewP} persons={persons} onEdit={()=>{}} onDelete={()=>{}} onClose={()=>setViewP(null)}/>}
+      {viewR&&<RecordDetailModal record={viewR} onClose={()=>setViewR(null)}/>}
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════
+//  HINTS PAGE
+// ══════════════════════════════════════════════════════
+const HintsPage = ({user,trees}) => {
+  const [accepted,setAccepted] = useState([]);
+  const [dismissed,setDismissed] = useState([]);
+  const [viewR,setViewR] = useState(null);
+
+  const hints = [
+    {id:'h1',icon:'🗂️',title:'1948 Gold Coast Census – Possible Match',person:'Your tree',conf:92,desc:'A household record from Accra district may match a family member in your tree. Records list a surname matching your family in Labadi, Greater Accra.',badge:'NEW'},
+    {id:'h2',icon:'💍',title:'Marriage Certificate – Possible Match',person:'Your tree',conf:87,desc:'A 1966 marriage certificate from Accra Magistrate Court may match ancestors in your family tree. The record references a ceremony at Wesley Methodist Church.',badge:'NEW'},
+    {id:'h3',icon:'🧬',title:'DNA Relative – Possible 3rd Cousin',person:'AfricanLineage DNA Network',conf:78,desc:'Another user shares an estimated 48cM of DNA overlap with profiles in your tree. Their ancestor tree includes Kumasi-region family members.',badge:'DNA'},
+    {id:'h4',icon:'📰',title:'Daily Graphic Archive Match',person:'Your tree',conf:71,desc:'A 1990 newspaper article may mention a relative from your family tree in a graduation ceremony announcement.',badge:'NEW'},
+    {id:'h5',icon:'⛪',title:'Baptism Record – Possible Ancestor',person:'Your tree',conf:83,desc:'Presbyterian Church baptism record from Kumasi lists a possible ancestor matching your family surname, born in the 1940s.',badge:'NEW'},
+    {id:'h6',icon:'🌍',title:'UK Passenger List – Possible Relative',person:'1988 record',conf:65,desc:'A UK passenger manifest from 1988 may list a relative travelling from Accra to London Heathrow for studies.',badge:'NEW'},
+  ];
+
+  const visible = hints.filter(h=>!dismissed.includes(h.id));
+
+  return (
+    <div>
+      <div className="dash-head"><h1>💡 Ancestry Hints</h1><p>Potential matches between your family tree and historical records</p></div>
+      <div className="dash-grid mb-3">
+        {[['Total Hints',hints.length],['Accepted',accepted.length],['Pending',hints.length-accepted.length-dismissed.length],['Dismissed',dismissed.length]].map(([l,n])=>(
+          <div key={l} className="ds-card"><span className="ds-n">{n}</span><span className="ds-l">{l}</span></div>
+        ))}
+      </div>
+      {visible.map(h=>(
+        <div key={h.id} className={`hint-card${accepted.includes(h.id)?' accepted':''}`}>
+          <div className="flex items-c gap-3 mb-2">
+            <span style={{fontSize:'1.65rem'}}>{h.icon}</span>
+            <div style={{flex:1}}>
+              <div className="flex items-c gap-2 wrap">
+                <strong style={{color:'var(--g900)',fontSize:'.95rem'}}>{h.title}</strong>
+                <span className={`badge ${h.badge==='DNA'?'badge-blue':'badge-green'}`}>{h.badge}</span>
+                {accepted.includes(h.id)&&<span className="badge badge-green">✓ Accepted</span>}
+              </div>
+              <div style={{fontSize:'.78rem',color:'var(--tl)',marginTop:'.18rem'}}>{h.person}</div>
+            </div>
+            <div style={{textAlign:'center',flexShrink:0}}>
+              <div style={{fontFamily:"'Quicksand',sans-serif",fontWeight:700,fontSize:'1.2rem',color:'var(--g600)'}}>{h.conf}%</div>
+              <div style={{fontSize:'.68rem',color:'var(--tl)'}}>match</div>
+              <div className="conf-bar"><div className="conf-fill" style={{width:`${h.conf}%`}}/></div>
+            </div>
+          </div>
+          <p style={{fontSize:'.875rem',color:'var(--tm)',lineHeight:1.7,marginBottom:'1rem'}}>{h.desc}</p>
+          <div className="flex gap-2">
+            {!accepted.includes(h.id)&&<button className="btn btn-primary btn-sm" onClick={()=>setAccepted(a=>[...a,h.id])}>✓ Accept</button>}
+            <button className="btn btn-secondary btn-sm" onClick={()=>setViewR(RECORDS[(parseInt(h.id.slice(1),10)-1) % RECORDS.length])}>📄 View Record</button>
+            <button className="btn btn-ghost btn-sm" onClick={()=>setDismissed(d=>[...d,h.id])}>✕ Dismiss</button>
+          </div>
+        </div>
+      ))}
+      {dismissed.length>0&&<button className="btn btn-ghost btn-sm" onClick={()=>setDismissed([])}>↩ Show {dismissed.length} dismissed</button>}
+      {viewR&&<RecordDetailModal record={viewR} onClose={()=>setViewR(null)}/>}
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════
+//  DASHBOARD HOME
+// ══════════════════════════════════════════════════════
+const DashHome = ({user, trees, profile, onNav}) => {
+  const [allPersons,setAllPersons] = useState([]);
+  const [allPhotos,setAllPhotos]   = useState([]);
+
+  useEffect(()=>{
+    if(!trees.length) return;
+    const treeIds = trees.map(t=>t.id);
+    Promise.all([
+      api.getPersonsForTrees(treeIds),
+      api.getPhotosForTrees(treeIds),
+    ]).then(([pRes,phRes])=>{
+      setAllPersons(pRes||[]);
+      setAllPhotos(phRes||[]);
+    });
+  },[trees]);
+
+  const name = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there';
+
+  return (
+    <div>
+      <div className="dash-head">
+        <h1>Welcome back, {name.split(' ')[0]} 👋</h1>
+        <p>Continue building your African family legacy</p>
+      </div>
+      <div className="dash-grid">
+        {[['🌳','Family Trees',trees.length,'trees'],['👥','People Added',allPersons.length,'trees'],['🖼️','Photos & Media',allPhotos.length,'trees'],['💡','Hints Available',3,'hints']].map(([ic,l,n,nav])=>(
+          <div key={l} className="ds-card" onClick={()=>onNav(nav)}>
+            <span className="ds-n">{n}</span><span className="ds-l">{ic} {l}</span>
+          </div>
+        ))}
+      </div>
+      {/* Hints banner */}
+      <div style={{background:'linear-gradient(135deg,var(--g800),var(--g700))',borderRadius:'var(--r-lg)',padding:'1.4rem',color:'#fff',marginBottom:'1.5rem'}}>
+        <h3 style={{fontSize:'1rem',color:'var(--g200)',marginBottom:'.75rem'}}>💡 Ancestry Hints for You</h3>
+        {[['🗂️','Census Match Found','1948 Gold Coast Census may have a record for your family.','NEW'],['🧬','DNA Connections','3 potential relatives found in our network.','DNA'],['📜','Church Record Found','Baptism record found in Kumasi archives.','NEW']].map(([ic,t,d,b])=>(
+          <div key={t} style={{display:'flex',alignItems:'flex-start',gap:'.75rem',marginBottom:'.75rem',padding:'.875rem',background:'rgba(255,255,255,.08)',borderRadius:'var(--r-sm)',cursor:'pointer',transition:'background .2s'}}
+            onMouseEnter={e=>e.currentTarget.style.background='rgba(255,255,255,.14)'} onMouseLeave={e=>e.currentTarget.style.background='rgba(255,255,255,.08)'}>
+            <span style={{fontSize:'1.35rem'}}>{ic}</span>
+            <div style={{flex:1,fontSize:'.82rem',color:'rgba(255,255,255,.85)',lineHeight:1.55}}>
+              <strong style={{color:'#fff',display:'block',marginBottom:'.12rem'}}>{t}</strong>{d}
+              <span style={{display:'inline-block',marginTop:'.3rem',padding:'.12rem .45rem',borderRadius:'100px',fontSize:'.68rem',fontWeight:700,background:b==='DNA'?'rgba(66,153,225,.3)':'rgba(90,176,104,.3)',color:b==='DNA'?'#90cdf4':'var(--g200)'}}>{b}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1.5rem'}}>
+        <div>
+          <h3 style={{fontSize:'1rem',color:'var(--g900)',marginBottom:'1rem'}}>📋 Recent Activity</h3>
+          <div className="timeline">
+            {[['Your account was created','Just now'],['Sample data loaded','Just now'],['Hints generated','Just now']].map(([t,d])=>(
+              <div key={t} className="tl-item"><div className="tl-dot"/><div className="tl-date">{d}</div><div className="tl-body">{t}</div></div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h3 style={{fontSize:'1rem',color:'var(--g900)',marginBottom:'1rem'}}>🔔 Notifications</h3>
+          {[['Build your first family tree to get started','now'],['Upload photos to bring your history alive','now'],['Search historical records for ancestor hints','now']].map(([t,d])=>(
+            <div key={t} className="notif"><div className="notif-dot"/><div style={{flex:1,fontSize:'.86rem',color:'var(--tm)'}}>{t}<div style={{fontSize:'.74rem',color:'var(--tl)',marginTop:'.18rem'}}>{d}</div></div></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════
+//  SETTINGS PAGE
+// ══════════════════════════════════════════════════════
+const SettingsPage = ({user, profile, onLogout}) => {
+  const [name,setName]   = useState(profile?.full_name||user?.user_metadata?.full_name||'');
+  const [region,setRegion] = useState(profile?.region||'');
+  const [saved,setSaved] = useState(false);
+  const [loading,setLoading] = useState(false);
+
+  const save = async () => {
+    setLoading(true);
+    await api.saveProfile({id:user.id,full_name:name,region});
+    setSaved(true); setLoading(false);
+    setTimeout(()=>setSaved(false),2500);
+  };
+
+  const changePassword = async () => {
+    const np = prompt('Enter new password (min 6 characters):');
+    if(!np||np.length<6) return;
+    const {error} = await api.updatePassword({userId:user.id,password:np});
+    alert(error?`Error: ${error.message}`:'✅ Password updated successfully!');
+  };
+
+  const deleteAccount = async () => {
+    if(!confirm('Delete your account and ALL data? This cannot be undone.')) return;
+    await api.deleteAccount(user.id);
+    onLogout();
+    alert('Account deleted. Sorry to see you go.');
+  };
+
+  const regions = ['West Africa','East Africa','Central Africa','Southern Africa','North Africa','Diaspora – Americas','Diaspora – UK/Europe','Diaspora – Caribbean'];
+
+  return (
+    <div style={{maxWidth:580}}>
+      <div className="dash-head"><h1>⚙️ Settings</h1><p>Manage your account and preferences</p></div>
+      {saved&&<div className="form-ok">✓ Profile saved successfully!</div>}
+      <div className="card mb-3">
+        <h3 style={{marginBottom:'1rem'}}>Profile Details</h3>
+        <div className="form-group"><label className="form-label">Full Name</label><input className="form-input" value={name} onChange={e=>setName(e.target.value)}/></div>
+        <div className="form-group"><label className="form-label">Email</label><input className="form-input" value={user.email} disabled/></div>
+        <div className="form-group"><label className="form-label">Ancestral Region</label>
+          <select className="form-input" value={region} onChange={e=>setRegion(e.target.value)}>
+            <option value="">Select region…</option>
+            {regions.map(r=><option key={r}>{r}</option>)}
+          </select>
+        </div>
+        <div className="flex gap-2 mt-2">
+          <button className="btn btn-primary" onClick={save} disabled={loading}>{loading?<span className="loading-dots">Saving</span>:'Save Profile'}</button>
+          <button className="btn btn-secondary" onClick={changePassword}>🔒 Change Password</button>
+        </div>
+      </div>
+      <div className="card mb-3">
+        <h3 style={{marginBottom:'1rem'}}>Privacy Settings</h3>
+        {[['Make tree public','Allow others to find your family tree in public search',true],['DNA matching','Enable DNA relative matching',true],['Share hints','Help improve hints for other users',true]].map(([l,d,v])=>(
+          <div key={l} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'.875rem 0',borderBottom:'1px solid var(--g50)'}}>
+            <div><div style={{fontWeight:600,fontSize:'.9rem',color:'var(--g900)'}}>{l}</div><div style={{fontSize:'.78rem',color:'var(--tl)'}}>{d}</div></div>
+            <label style={{cursor:'pointer',position:'relative',display:'inline-block',width:38,height:20}}>
+              <input type="checkbox" defaultChecked={v} style={{opacity:0,width:0,height:0}}/>
+              <span style={{position:'absolute',inset:0,background:'var(--g400)',borderRadius:10}}/>
+            </label>
+          </div>
+        ))}
+      </div>
+      <div className="card" style={{borderColor:'#fecaca'}}>
+        <h3 style={{marginBottom:'.75rem',color:'#dc2626'}}>Danger Zone</h3>
+        <div className="flex jb items-c">
+          <div><div style={{fontWeight:600,fontSize:'.875rem'}}>Delete Account</div><div style={{fontSize:'.78rem',color:'var(--tl)'}}>Permanently delete your account and all data</div></div>
+          <button className="btn btn-danger btn-sm" onClick={deleteAccount}>Delete Account</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════
+//  PUBLIC MARKETING PAGES
+// ══════════════════════════════════════════════════════
+const PUBLIC_NAV = [
+  ['home','Home'],
+  ['about','About'],
+  ['features','Features'],
+  ['records','Records'],
+];
+
+const FEATURE_CARDS = [
+  ['🌳','Family Tree Builder','Add relatives, connect parents and children, and build a living lineage record one person at a time.'],
+  ['🖼️','Memory Vault','Preserve family photos and scanned documents with captions, years, and notes that keep context intact.'],
+  ['📜','Record Search','Search a starter archive by name, region, and approximate year, then save promising research leads.'],
+  ['💡','Matching Hints','Review likely matches between people in your tree and records in the archive, then save or dismiss them.'],
+  ['📱','Simple Access','Use the product on desktop or mobile without needing genealogy software experience.'],
+  ['🔐','Private by Default','Your trees, media, and saved leads stay tied to your account unless you choose to share them.'],
+];
+
+
+const FAQS = [
+  ['Can I use the site before Supabase is connected?','Yes. Local mode lets you test the experience in one browser before connecting a live Supabase project.'],
+  ['What can I do in the MVP?','Create a tree, add relatives, upload family images, search records, and save likely matches for later research.'],
+  ['Is my family data private?','Yes. Private tree data is tied to your account, and the product is designed around family-controlled workspace data.'],
+  ['Can relatives use it on phones?','Yes. The layout is responsive and the core tree, gallery, and search views work on both desktop and mobile screens.'],
+];
+
+const Footer = ({onNav}) => (
+  <footer>
+    <div className="footer-in">
+      <div className="fc">
+        <div style={{fontFamily:"'Quicksand',sans-serif",fontWeight:700,color:'rgba(255,255,255,.8)',marginBottom:'.5rem',fontSize:'1.05rem'}}>African<span style={{color:'var(--g400)'}}>Lineage</span></div>
+        <p style={{fontSize:'.82rem',lineHeight:1.65,maxWidth:220}}>A private digital home for African ancestry, family memory, and record-based research.</p>
+      </div>
+      <div className="fc">
+        <h4>Platform</h4>
+        <ul>
+          {[['features','Features'],['records','Records'],['home','Start a tree']].map(([page,label])=>(
+            <li key={page}><button className="mk-linkbtn" onClick={()=>onNav(page)}>{label}</button></li>
+          ))}
+        </ul>
+      </div>
+      <div className="fc">
+        <h4>Company</h4>
+        <ul>
+          {[['about','About us'],['contact','Contact'],['home','Get started']].map(([page,label])=>(
+            <li key={page}><button className="mk-linkbtn" onClick={()=>onNav(page)}>{label}</button></li>
+          ))}
+        </ul>
+      </div>
+      <div className="fc">
+        <h4>Legal</h4>
+        <ul>
+          {[['privacy','Privacy policy'],['terms','Terms of service'],['contact','Support']].map(([page,label])=>(
+            <li key={page}><button className="mk-linkbtn" onClick={()=>onNav(page)}>{label}</button></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    <div className="footer-bottom">© 2026 AfricanLineage.com · Built for the African diaspora · Static-host ready</div>
+  </footer>
+);
+
+const RecordsPreview = ({onSignup}) => (
+  <section className="section">
+    <div className="mk-shell" style={{paddingBottom:0}}>
+      <p className="section-label">Records Preview</p>
+      <h2 className="section-title">A searchable archive experience your family can actually use</h2>
+      <p className="section-sub">Historic records, family profiles, and photo evidence live side by side so the story stays connected.</p>
+      <div className="card-grid-2">
+        {RECORDS.slice(0,4).map(r=>(
+          <div key={r.id} className="card">
+            <div className="flex items-c gap-2 mb-2"><span className="badge badge-green">{r.type}</span><span style={{fontSize:'.78rem',color:'var(--tl)'}}>{r.year}</span></div>
+            <h3>{r.name}</h3>
+            <p>{r.desc}</p>
+            <div className="flex gap-1 wrap mt-2"><span className="chip">{r.region}</span><span className="chip">{r.collection}</span></div>
+          </div>
+        ))}
+      </div>
+      <div className="text-c mt-4"><button className="btn btn-primary" onClick={onSignup}>Create an account to search all records</button></div>
+    </div>
+  </section>
+);
+
+const LandingPage = ({onSignup, onLogin, onNav}) => {
+  const [q,setQ] = useState('');
+  return (
+    <div className="mk-wrap">
+      <section className="hero">
+        <div className="hero-dots"/>
+        <div className="hero-badge">Preserve African ancestry with clarity</div>
+        <h1>Build your family tree, preserve your memories, and search for your roots in one place.</h1>
+        <p className="hero-sub">AfricanLineage helps African and diaspora families organize relatives, store photos and notes, and save record-based research leads without losing the human story behind the data.</p>
+        <div className="hero-actions">
+          <button className="btn btn-primary btn-lg" onClick={onSignup}>Start Your Family Tree</button>
+          <button className="btn btn-outline btn-lg" onClick={()=>onNav('records')}>Search Records</button>
+        </div>
+        <div className="search-hero-wrap">
+          <div className="search-hero">
+            <span style={{color:'var(--tl)'}}>🔍</span>
+            <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search an ancestor name, surname, or region…"/>
+            <button className="btn btn-primary btn-sm" onClick={()=>q&&onNav('records')}>Search</button>
+          </div>
+          <p style={{fontSize:'.78rem',color:'var(--tl)',textAlign:'center',marginTop:'.55rem'}}>Try: <strong style={{color:'var(--tm)'}}>Mensah</strong> · <strong style={{color:'var(--tm)'}}>Diallo</strong> · <strong style={{color:'var(--tm)'}}>Nkosi</strong> · <strong style={{color:'var(--tm)'}}>Okafor</strong></p>
+        </div>
+      </section>
+
+      <div className="stats">
+        {[['1 place','for tree, memory, and records'],['Private','family workspace'],['Mobile','usable on phones and desktop'],['Simple','to start in minutes']].map(([n,l])=>(
+          <div key={l} className="stat"><span className="stat-n">{n}</span><span className="stat-l">{l}</span></div>
+        ))}
+      </div>
+
+      <section className="section">
+        <div className="mk-shell" style={{paddingBottom:0}}>
+          <div className="mk-hero-grid">
+            <div>
+              <span className="mk-eyebrow">Family history is too important to leave scattered</span>
+              <h2 className="section-title" style={{textAlign:'left',margin:'1rem 0 .75rem'}}>One workspace for lineage research, family memory, and saved evidence</h2>
+              <p className="section-sub" style={{textAlign:'left',margin:'0 0 1.3rem'}}>Many families are piecing together ancestry across migration, oral history, missing records, and name changes. AfricanLineage gives you one place to gather what your family knows and connect it to records you can search and save.</p>
+              <div className="hero-actions" style={{justifyContent:'flex-start'}}>
+                <button className="btn btn-primary" onClick={onSignup}>Start Your Family Tree</button>
+                <button className="btn btn-secondary" onClick={onLogin}>Sign In</button>
+              </div>
+            </div>
+            <div className="mk-list">
+              {[
+                ['Build a living family tree','Add relatives, connect relationships, and keep names, places, and notes together.'],
+                ['Preserve photos and memory','Store family images and documents so stories are not lost in chats or old boxes.'],
+                ['Search and save research leads','Review records and likely matches without losing the family context around them.'],
+              ].map(([title,desc])=>(
+                <div key={title} className="mk-list-item">
+                  <span style={{fontSize:'1.25rem'}}>✓</span>
+                  <div><b>{title}</b><p>{desc}</p></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <p className="section-label">How It Works</p>
+        <h2 className="section-title">Start in minutes</h2>
+        <p className="section-sub">The MVP focuses on the first workflow a family historian actually needs.</p>
+        <div className="card-grid-3">
+          {[['👤','Create your account','Sign up with email and choose the family line or region you want to begin with.'],['🌿','Add the relatives you know','Start with parents, grandparents, and the names your family can confirm today.'],['🖼️','Upload memories and evidence','Attach photos, scanned documents, and notes so names become real stories.'],['📜','Search and save leads','Search the archive, review likely matches, and save records worth revisiting later.']].map(([ic,t,d],i)=>(
+            <div key={t} className="card">
+              <div style={{fontFamily:"'Quicksand',sans-serif",fontWeight:700,fontSize:'2.4rem',color:'var(--g100)',lineHeight:1,marginBottom:'.45rem'}}>0{i+1}</div>
+              <div className="card-icon" style={{background:'var(--g50)'}}>{ic}</div>
+              <h3>{t}</h3><p>{d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section bg-light">
+        <p className="section-label">Features</p>
+        <h2 className="section-title">Everything you need to begin</h2>
+        <p className="section-sub">The launch scope stays focused on the core jobs families need first.</p>
+        <div className="card-grid-3">
+          {FEATURE_CARDS.map(([ic,t,d], idx)=>(
+            <div key={t} className="card" style={{borderColor:'transparent'}}>
+              <div className="card-icon" style={{background:idx % 2 === 0 ? 'var(--g50)' : '#eef6ff'}}>{ic}</div>
+              <h3>{t}</h3><p>{d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="mk-shell" style={{paddingBottom:0}}>
+          <p className="section-label">Trust & Storytelling</p>
+          <h2 className="section-title">Built for memory, not just charts</h2>
+          <div className="mk-grid">
+            <div className="mk-quote">
+              <p>Family history often lives half in memory and half in scattered evidence. AfricanLineage is designed to hold both, so research stays usable and the human story stays visible.</p>
+              <small>MVP principle</small>
+            </div>
+            <div className="mk-panel">
+              <h3 style={{marginBottom:'.7rem'}}>What families need most</h3>
+              <div className="mk-list">
+                {[
+                  'A place to save fragile memories before they disappear',
+                  'A clean way to organize evidence without losing context',
+                  'Private family-controlled data by default',
+                ].map(item => <div key={item} className="chip" style={{width:'fit-content'}}>{item}</div>)}
+              </div>
+            </div>
+          </div>
+          <div className="mk-stat-grid">
+            {[['3 min','to create a starter tree'],['1 place','for records, notes, and media'],['Private','workspace by default'],['Mobile','ready for family sharing']].map(([n,l])=>(
+              <div key={l} className="mk-stat"><strong>{n}</strong><span style={{fontSize:'.84rem',color:'var(--tm)'}}>{l}</span></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <RecordsPreview onSignup={onSignup}/>
+
+      <section className="section bg-light">
+        <div className="mk-shell" style={{paddingBottom:0}}>
+          <p className="section-label">Questions</p>
+          <h2 className="section-title">Common things families ask before they begin</h2>
+          <div className="mk-grid">
+            {FAQS.map(([q,a])=>(
+              <div key={q} className="mk-faq"><h4>{q}</h4><p>{a}</p></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section bg-dark" style={{textAlign:'center'}}>
+        <p className="section-label" style={{color:'var(--g300)'}}>Get Started</p>
+        <h2 className="section-title" style={{color:'#fff'}}>Start preserving your family story today.</h2>
+        <p className="section-sub" style={{color:'rgba(255,255,255,.6)'}}>Create your first tree, add the people you know, and begin building a digital home for your lineage.</p>
+        <div className="hero-actions">
+          <button className="btn btn-white btn-lg" onClick={onSignup}>Start Your Family Tree</button>
+          <button className="btn btn-dark-outline btn-lg" onClick={()=>onNav('records')}>Search Records</button>
+        </div>
+      </section>
+      <Footer onNav={onNav}/>
+    </div>
+  );
+};
+
+const AboutPage = ({onSignup, onNav}) => (
+  <div className="mk-wrap">
+    <section className="section">
+      <div className="mk-shell">
+        <span className="mk-eyebrow">About AfricanLineage</span>
+        <h1 className="section-title" style={{textAlign:'left',marginTop:'1rem'}}>A digital home for African ancestry, migration stories, and family memory</h1>
+        <p className="section-sub" style={{textAlign:'left',margin:'0 0 1.5rem'}}>This project is built for families who want more than a pedigree chart. It brings together names, dates, records, photos, and oral history in one private research space.</p>
+        <div className="mk-grid">
+          <div className="mk-panel"><h3>Why it exists</h3><p style={{fontSize:'.86rem',color:'var(--tm)',lineHeight:1.7}}>Many African and diaspora families are reconstructing history across migration, colonization, name changes, and incomplete records. The platform is designed to support that reality instead of pretending every archive is complete.</p></div>
+          <div className="mk-panel"><h3>Who it serves</h3><p style={{fontSize:'.86rem',color:'var(--tm)',lineHeight:1.7}}>Families, community historians, and diaspora researchers who want a simpler way to preserve lineage knowledge without losing context.</p></div>
+          <div className="mk-panel"><h3>What makes it different</h3><p style={{fontSize:'.86rem',color:'var(--tm)',lineHeight:1.7}}>It balances research tools with storytelling. You can organize evidence while still keeping the human voice of the family intact.</p></div>
+        </div>
+      </div>
+    </section>
+    <section className="section bg-light">
+      <div className="mk-shell">
+        <p className="section-label">Guiding Principles</p>
+        <div className="card-grid-3">
+          {[
+            ['Respect living memory','Oral history belongs beside official records.'],
+            ['Keep access simple','Relatives should be able to contribute without technical training.'],
+            ['Preserve context','A name is only part of a story. Places, relationships, and photos matter too.'],
+          ].map(([title,desc])=>(
+            <div key={title} className="card"><h3>{title}</h3><p>{desc}</p></div>
+          ))}
+        </div>
+      </div>
+    </section>
+    <section className="section">
+      <div className="mk-shell">
+        <div className="mk-banner">
+          <h2 style={{fontSize:'1.7rem',marginBottom:'.8rem'}}>Ready to preserve your family story online?</h2>
+          <p>Start with one tree, one family line, and one set of memories worth preserving. Add Supabase when you are ready for live persistence.</p>
+          <div className="hero-actions" style={{justifyContent:'flex-start',marginTop:'1rem'}}>
+            <button className="btn btn-white" onClick={onSignup}>Start your tree</button>
+            <button className="btn btn-dark-outline" onClick={()=>onNav('features')}>Explore features</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <Footer onNav={onNav}/>
+  </div>
+);
+
+const FeaturesPage = ({onSignup, onNav}) => (
+  <div className="mk-wrap">
+    <section className="section">
+      <div className="mk-shell">
+        <p className="section-label">Platform Features</p>
+        <h1 className="section-title">The focused MVP feature set</h1>
+        <p className="section-sub">The launch product centers on tree building, memory preservation, searchable records, and basic hints.</p>
+        <div className="card-grid-3">
+          {FEATURE_CARDS.map(([ic,t,d])=>(
+            <div key={t} className="card"><div className="card-icon" style={{background:'var(--g50)'}}>{ic}</div><h3>{t}</h3><p>{d}</p></div>
+          ))}
+        </div>
+      </div>
+    </section>
+    <section className="section bg-light">
+      <div className="mk-shell">
+        <div className="mk-grid">
+          <div className="mk-panel"><h3>For family historians</h3><p style={{fontSize:'.86rem',color:'var(--tm)',lineHeight:1.7}}>Start quickly with a simple private workspace for names, relationships, photos, notes, and saved records.</p></div>
+          <div className="mk-panel"><h3>For product delivery</h3><p style={{fontSize:'.86rem',color:'var(--tm)',lineHeight:1.7}}>Static deploy, Supabase auth, database tables, storage bucket support, and local fallback make the MVP practical to ship.</p></div>
+          <div className="mk-panel"><h3>For future growth</h3><p style={{fontSize:'.86rem',color:'var(--tm)',lineHeight:1.7}}>Collaboration, pricing, richer archives, and content can come after activation and retention are proven.</p></div>
+        </div>
+      </div>
+    </section>
+    <Footer onNav={onNav}/>
+  </div>
+);
+
+const RecordsPage = ({onSignup, onNav}) => (
+  <div className="mk-wrap">
+    <RecordsPreview onSignup={onSignup}/>
+    <section className="section bg-light">
+      <div className="mk-shell">
+        <div className="mk-panel">
+          <h3 style={{marginBottom:'.5rem'}}>What this records page does</h3>
+          <p style={{fontSize:'.86rem',color:'var(--tm)',lineHeight:1.7}}>It shows the kind of archive search experience the MVP offers. Once signed in, users can search, review details, and save promising records as family research leads.</p>
+          <div className="hero-actions" style={{justifyContent:'flex-start',marginTop:'1rem'}}>
+            <button className="btn btn-primary" onClick={onSignup}>Start your tree</button>
+            <button className="btn btn-secondary" onClick={()=>onNav('features')}>See MVP features</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <Footer onNav={onNav}/>
+  </div>
+);
+
+const ContactPage = ({onNav}) => (
+  <div className="mk-wrap">
+    <section className="section">
+      <div className="mk-shell">
+        <p className="section-label">Contact</p>
+        <h1 className="section-title">Talk to us about family archives, community deployments, or launch support</h1>
+        <div className="card-grid-2">
+          <div className="card"><h3>Email</h3><p>support@africanlineage.com</p></div>
+          <div className="card"><h3>Partnerships</h3><p>community@africanlineage.com</p></div>
+          <div className="card"><h3>Response time</h3><p>Usually within 1 to 2 business days for product and deployment questions.</p></div>
+          <div className="card"><h3>Best next step</h3><p>Set up Supabase, deploy on Netlify or Vercel, and then use this contact page for custom expansion requests.</p></div>
+        </div>
+      </div>
+    </section>
+    <Footer onNav={onNav}/>
+  </div>
+);
+
+const SimpleContentPage = ({title, subtitle, blocks, onNav}) => (
+  <div className="mk-wrap">
+    <section className="section">
+      <div className="mk-shell">
+        <h1 className="section-title">{title}</h1>
+        <p className="section-sub">{subtitle}</p>
+        <div className="mk-grid">
+          {blocks.map(([heading, body])=>(
+            <div key={heading} className="mk-panel"><h3 style={{marginBottom:'.55rem'}}>{heading}</h3><p style={{fontSize:'.86rem',color:'var(--tm)',lineHeight:1.72}}>{body}</p></div>
+          ))}
+        </div>
+      </div>
+    </section>
+    <Footer onNav={onNav}/>
+  </div>
+);
+
+const PublicPage = ({page, onSignup, onLogin, onNav}) => {
+  if (page === 'about') return <AboutPage onSignup={onSignup} onNav={onNav}/>;
+  if (page === 'features') return <FeaturesPage onSignup={onSignup} onNav={onNav}/>;
+  if (page === 'records') return <RecordsPage onSignup={onSignup} onNav={onNav}/>;
+  if (page === 'contact') return <ContactPage onNav={onNav}/>;
+  if (page === 'privacy') return <SimpleContentPage title="Privacy Policy" subtitle="A simple placeholder privacy page for the public site." blocks={[
+    ['What we store','Account details, family tree data, uploaded media, and settings needed to run the service.'],
+    ['How data is used','To let you build, search, preserve, and share lineage information with your permitted collaborators.'],
+    ['Your control','You can update profile information, remove media, and delete your account from the app settings.'],
+  ]} onNav={onNav}/>;
+  if (page === 'terms') return <SimpleContentPage title="Terms of Service" subtitle="A simple placeholder terms page for launch readiness." blocks={[
+    ['Acceptable use','Do not upload unlawful content, impersonate others, or misuse family information you do not have permission to share.'],
+    ['Service availability','This static-hosted application is provided as-is and may evolve as features are improved.'],
+    ['Account responsibility','You are responsible for your credentials and for verifying sensitive family claims before publishing them broadly.'],
+  ]} onNav={onNav}/>;
+  return <LandingPage onSignup={onSignup} onLogin={onLogin} onNav={onNav}/>;
+};
+
+const renderPublicPage = (page, props) => {
+  const normalized = PUBLIC_NAV.some(([key])=>key===page) || ['records','contact','privacy','terms'].includes(page) ? page : 'home';
+  return <PublicPage page={normalized} {...props}/>;
+};
+
+// ══════════════════════════════════════════════════════
+//  MAIN APP
+// ══════════════════════════════════════════════════════
+const App = () => {
+  const [user,setUser]       = useState(null);
+  const [profile,setProfile] = useState(null);
+  const [trees,setTrees]     = useState([]);
+  const [page,setPage]       = useState('home');
+  const [modal,setModal]     = useState(null);
+  const [bootDone,setBootDone] = useState(false);
+
+  // ── Boot: check Supabase session ──
+  useEffect(()=>{
+    api.getSession().then(({user: sessionUser})=>{
+      if(sessionUser){
+        setUser(sessionUser);
+        loadProfile(sessionUser.id);
+        loadTrees(sessionUser.id);
+        setPage('dashboard');
+      }
+      setBootDone(true);
+    });
+    const unsubscribe = api.onAuthStateChange((nextUser)=>{
+      if(nextUser){
+        setUser(nextUser);
+        loadProfile(nextUser.id);
+        loadTrees(nextUser.id);
+      } else {
+        setUser(null);setProfile(null);setTrees([]);setPage('home');
+      }
+    });
+    return unsubscribe;
+  },[]);
+
+  const loadProfile = async (uid) => {
+    const data = await api.getProfile(uid);
+    setProfile(data);
+  };
+
+  const loadTrees = async (uid) => {
+    const data = await api.getTrees(uid);
+    setTrees(data||[]);
+  };
+
+  const handleAuthDone = async (u) => {
+    setUser(u);
+    await loadProfile(u.id);
+    await loadTrees(u.id);
+    setModal(null);
+    setPage('dashboard');
+  };
+
+  const handleLogout = async () => {
+    await api.signOut();
+    setUser(null);setProfile(null);setTrees([]);setPage('home');
+  };
+
+  const navTo = (p) => {
+    if(!user&&['dashboard','trees','search','hints','settings'].includes(p)) return setModal('login');
+    if(user&&p==='home') return setPage('dashboard');
+    setPage(p);
+  };
+
+  if(!bootDone) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh'}}><div className="spin"/></div>;
+
+  // ── Sidebar wrapped dashboard ──
+  const DashWrap = ({children}) => (
+    <div className="dash">
+      <div className="sidebar">
+        <div className="sb-section">
+          <div className="sb-label">Main</div>
+          {[['dashboard','🏠','Overview'],['trees','🌳','Family Trees'],['hints','💡','Hints'],['search','🔍','Search'],].map(([k,ic,l])=>(
+            <button key={k} className={`sb-item${page===k?' active':''}`} onClick={()=>setPage(k)}>
+              <span className="sb-icon">{ic}</span>{l}
+            </button>
+          ))}
+        </div>
+        <div className="sb-section">
+          <div className="sb-label">Account</div>
+          <button className={`sb-item${page==='settings'?' active':''}`} onClick={()=>setPage('settings')}><span className="sb-icon">⚙️</span>Settings</button>
+          <button className="sb-item" onClick={handleLogout}><span className="sb-icon">🚪</span>Sign Out</button>
+        </div>
+        <div style={{padding:'.875rem',marginTop:'auto'}}>
+          <div style={{background:'var(--g50)',borderRadius:'var(--r-md)',padding:.875+'rem',fontSize:'.76rem',color:'var(--tl)'}}>
+            <div style={{fontWeight:700,color:'var(--g700)',marginBottom:'.3rem'}}>Tree Completion</div>
+            <div className="prog"><div className="prog-fill" style={{width:`${Math.min(100,trees.length*20+30)}%`}}/></div>
+            <div style={{marginTop:'.3rem'}}>{trees.length} tree{trees.length!==1?'s':''} · Keep growing!</div>
+          </div>
+        </div>
+      </div>
+      <div className="dash-main">{children}</div>
+    </div>
+  );
+
+  return (
+    <div className="app">
+      <ModeNotice/>
+      <Nav
+        user={user} page={page}
+        onLogin={()=>setModal('login')}
+        onSignup={()=>setModal('signup')}
+        onNav={navTo}
+        onLogout={handleLogout}
+        profile={profile}
+      />
+      <main style={{flex:1}}>
+        {!user && renderPublicPage(page, {onSignup:()=>setModal('signup'), onLogin:()=>setModal('login'), onNav:navTo})}
+        {user&&page==='dashboard' && <DashWrap><DashHome user={user} trees={trees} profile={profile} onNav={setPage}/></DashWrap>}
+        {user&&page==='trees'     && <DashWrap><TreesPage user={user} trees={trees} reloadTrees={()=>loadTrees(user.id)}/></DashWrap>}
+        {user&&page==='search'    && <DashWrap><SearchPage user={user} trees={trees}/></DashWrap>}
+        {user&&page==='hints'     && <DashWrap><HintsPage user={user} trees={trees}/></DashWrap>}
+        {user&&page==='settings'  && <DashWrap><SettingsPage user={user} profile={profile} onLogout={handleLogout}/></DashWrap>}
+      </main>
+
+      {modal==='login'  && <LoginModal  onClose={()=>setModal(null)} onDone={handleAuthDone} onSwitch={()=>setModal('signup')}/>}
+      {modal==='signup' && <SignupModal onClose={()=>setModal(null)} onDone={handleAuthDone} onSwitch={()=>setModal('login')}/>}
+    </div>
+  );
+};
+
+// ── Nav component (needs profile for display) ──
+const Nav = ({user, page, onLogin, onSignup, onNav, onLogout, profile}) => {
+  const name = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0];
+  return (
+    <nav className="nav">
+      <div className="nav-logo" onClick={()=>onNav(user ? 'dashboard' : 'home')}>
+        <Logo size={30}/>
+        <span className="logo-text">African<span>Lineage</span></span>
+      </div>
+      {!user&&(
+        <div className="nav-links">
+          {PUBLIC_NAV.filter(([key])=>key!=='home').map(([key,label])=>(
+            <button key={key} className={`btn-nav${page===key?' active':''}`} onClick={()=>onNav(key)}>{label}</button>
+          ))}
+        </div>
+      )}
+      {user&&(
+        <div className="nav-links">
+          {[['dashboard','🏠 Overview'],['trees','🌳 Trees'],['search','🔍 Search'],['hints','💡 Hints']].map(([k,l])=>(
+            <button key={k} className={`btn-nav${page===k?' active':''}`} onClick={()=>onNav(k)}>{l}</button>
+          ))}
+        </div>
+      )}
+      <div className="nav-r">
+        {!user?(
+          <><button className="btn btn-ghost btn-sm" onClick={onLogin}>Sign in</button>
+          <button className="btn btn-primary btn-sm" onClick={onSignup}>Start Your Tree</button></>
+        ):(
+          <div className="flex items-c gap-2">
+            {name&&<span style={{fontSize:'.8rem',color:'var(--tl)',display:'none'}}>{name}</span>}
+            <button className="btn btn-ghost btn-sm" onClick={()=>onNav('settings')} title="Settings">⚙️</button>
+            <button className="btn btn-ghost btn-sm" onClick={onLogout} title="Sign out">🚪 Sign Out</button>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
