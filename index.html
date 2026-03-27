@@ -730,8 +730,13 @@ const supabaseApi = {
     return data || [];
   },
   async savePerson(payload) {
-    if (payload.id) await sb.from('persons').update(payload).eq('id', payload.id);
-    else await sb.from('persons').insert([payload]);
+    if (payload.id) {
+      const {error} = await sb.from('persons').update(payload).eq('id', payload.id);
+      if (error) throw error;
+    } else {
+      const {error} = await sb.from('persons').insert([payload]);
+      if (error) throw error;
+    }
   },
   async deletePerson(personId) {
     await sb.from('persons').delete().eq('id', personId);
@@ -805,6 +810,7 @@ const RECORDS = [
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 const uid  = () => Math.random().toString(36).slice(2,9);
+const dbUid = () => (window.crypto?.randomUUID ? window.crypto.randomUUID() : `${uid()}-${uid()}-${uid()}-${uid()}`);
 const GED_IMPORT_PREFIX = '[GEDIMPORT:';
 const full = p => `${p.first_name||p.firstName||''} ${p.last_name||p.lastName||''}`.trim()||'Unknown';
 const init = p => ((p.first_name||p.firstName||'?')[0]+(p.last_name||p.lastName||'?')[0]).toUpperCase();
@@ -888,7 +894,7 @@ const parseGedcom = (content, {treeId, userId, gedId}) => {
     }
   });
 
-  const idMap = new Map(Object.keys(individuals).map((key) => [key, uid()]));
+  const idMap = new Map(Object.keys(individuals).map((key) => [key, dbUid()]));
   const imported = Object.values(individuals).map((indi) => ({
     id: idMap.get(indi.id),
     tree_id: treeId,
